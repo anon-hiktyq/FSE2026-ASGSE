@@ -4,7 +4,7 @@ ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for
 
 ### Overview of ASGSE
 
-![workflow](.\images\workflow.png)
+![workflow](./images/workflow.png)
 
 ### Repository Structure
 - `src/`: Main source for spec generation and loop invariant workflows
@@ -75,7 +75,7 @@ run main.py
 ```
 for motivating example *CheckCalFun*
 
-![example](.\images\example.png)
+![example](./images/example.png)
 
 ### Instructions
 
@@ -185,5 +185,3 @@ python main.py --help
 ```
 
 
-
-### 
