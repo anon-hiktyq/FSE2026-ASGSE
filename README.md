@@ -8,7 +8,7 @@ ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for
 
 ### Repository Structure
 - `src/`: Main source for spec generation and loop invariant workflows
-- `APPENDIX/`: the appendix of our paper
+- `APPENDIX/`: The appendix of our paper
 - `RESULTS/`: Raw experiments results
 - `VST/`: Symbolic executor
 
@@ -85,7 +85,6 @@ Two configuration file formats are supported:
 
 - JSON format (.json)
 - YAML format (.yml, .yaml)
-
 
 
 #### Configuration File Structure
