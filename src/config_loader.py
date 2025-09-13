@@ -41,26 +41,26 @@ class ConfigLoader:
         # 设置基本参数
         config.root_dir = analyzer_config.get('root_dir')
         config.function_name = analyzer_config.get('function_name')
-        config.debug = analyzer_config.get('debug', True)
-        config.generlization = analyzer_config.get('generlization', False)
-        config.only_loop = analyzer_config.get('only_loop', True)
-        config.list_loop = analyzer_config.get('list_loop', False)
-        config.auto_annotation = analyzer_config.get('auto_annotation', True)
-        config.refine_count = analyzer_config.get('refine_count', 3)
-        config.pass_count = analyzer_config.get('pass_count', 5)
-        config.think = analyzer_config.get('think', True)
-        config.template = analyzer_config.get('template', True)
-        config.auto_post = analyzer_config.get('auto_post', True)
-        config.use_db = analyzer_config.get('use_db', True)
-        config.db_path = analyzer_config.get('db_path', 'VectorDB/Jsons/init.json')
+        config.debug = analyzer_config.get('debug', config.debug)
+        config.generlization = analyzer_config.get('generlization', config.generlization)
+        config.only_loop = analyzer_config.get('only_loop', config.only_loop)
+        config.list_loop = analyzer_config.get('list_loop', config.list_loop)
+        config.auto_annotation = analyzer_config.get('auto_annotation', config.auto_annotation)
+        config.refine_count = analyzer_config.get('refine_count', config.refine_count)
+        config.pass_count = analyzer_config.get('pass_count', config.pass_count)
+        config.think = analyzer_config.get('think', config.think)
+        config.template = analyzer_config.get('template', config.template)
+        config.auto_post = analyzer_config.get('auto_post', config.auto_post)
+        config.use_db = analyzer_config.get('use_db', config.use_db)
+        config.db_path = analyzer_config.get('db_path', config.db_path)
         
         # 设置目录路径
-        config.input_dir = analyzer_config.get('input_dir', 'input')
-        config.annotated_c_dir = analyzer_config.get('annotated_c_dir', '1_output')
-        config.annotated_loop_dir = analyzer_config.get('annotated_loop_dir', '2_output')
-        config.generated_loop_dir = analyzer_config.get('generated_loop_dir', '3_output')
-        config.output_dir = analyzer_config.get('output_dir', 'output')
-        config.log_dir = analyzer_config.get('log_dir', 'log')
+        config.input_dir = analyzer_config.get('input_dir', config.input_dir)
+        config.annotated_c_dir = analyzer_config.get('annotated_c_dir', config.annotated_c_dir)
+        config.annotated_loop_dir = analyzer_config.get('annotated_loop_dir', config.annotated_loop_dir)
+        config.generated_loop_dir = analyzer_config.get('generated_loop_dir', config.generated_loop_dir)
+        config.output_dir = analyzer_config.get('output_dir', config.output_dir)
+        config.log_dir = analyzer_config.get('log_dir', config.log_dir)
         
         return config
     
@@ -72,13 +72,13 @@ class ConfigLoader:
         config = LLMConfig()
         
         # 设置LLM参数
-        config.use_api_model = llm_config.get('use_api_model', True)
-        config.api_model = llm_config.get('api_model', 'gpt-4o')
-        config.api_key = llm_config.get('api_key', '')
-        config.base_url = llm_config.get('base_url', 'https://yunwu.ai/v1')
-        config.api_temperature = llm_config.get('api_temperature', 0.7)
-        config.api_top_p = llm_config.get('api_top_p', 0.7)
-        config.think_mode_enabled = llm_config.get('think_mode_enabled', False)
+        config.use_api_model = llm_config.get('use_api_model', config.use_api_model)
+        config.api_model = llm_config.get('api_model', config.api_model)
+        config.api_key = llm_config.get('api_key', config.api_key)
+        config.base_url = llm_config.get('base_url', config.base_url)
+        config.api_temperature = llm_config.get('api_temperature', config.api_temperature)
+        config.api_top_p = llm_config.get('api_top_p', config.api_top_p)
+        config.think_mode_enabled = llm_config.get('think_mode_enabled', config.think_mode_enabled)
         
         return config
     
