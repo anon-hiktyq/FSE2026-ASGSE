@@ -91,7 +91,7 @@ Two configuration file formats are supported:
 
 ##### 1. Main process configuration
 
-This section contains settings for the code analysis process.
+This section contains settings for the program specification generation process.
 
 ```yaml
 code_analyzer:
