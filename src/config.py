@@ -56,8 +56,8 @@ class LLMConfig:
     # API 模型的配置
     use_api_model = True # 控制是使用 API 模型还是本地 Transformers 模型
     api_model:str = "gpt-4o" # API 模型的Name，例如 "gpt-4o"
-    api_key:str = "sk-9dnxPHHwjlTiAlH0uUoKwiW79Hs51AGpqUSRj9DvZurLZx1R" # 你的 OpenAI 或兼容 API 的密钥
-    base_url:str = "https://yunwu.ai/v1" # API 的 base_url
+    api_key:str = "your-api-key" # 你的 OpenAI 或兼容 API 的密钥
+    base_url:str = "your-base-url" # API 的 base_url
     api_temperature = 0.7 # API 调用的温度参数
     api_top_p=0.7
     think_mode_enabled = False
