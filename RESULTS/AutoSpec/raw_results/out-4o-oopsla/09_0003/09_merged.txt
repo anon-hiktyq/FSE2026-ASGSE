@@ -1,0 +1,3 @@
+/home/yangfp/AutoSpec/AutoSpec/out/09_0003/09_merged.c:59:3: error: unterminated comment
+   59 |   /*@;
+      |   ^

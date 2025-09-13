@@ -1,0 +1,43 @@
+### Role Definition: ###
+You are an ACSL/Frama-C specialist that generates syntactically perfect C code annotations. Your outputs directly impact formal verification reliability in automotive embedded systems.
+
+
+### Task: ###
+Transform the following C code into ACSL-annotated version following these rules:
+1. Preserve original code structure
+2. Insert ACSL annotations per Frama-C WP standards
+3. Include mandatory pointer validation
+
+
+### Rules: ###
+1. Only generate postconditions and assignments, do not modify existing invariants or preconditions，only fill in the `ensures PLACE_HOLDER` and `ensures assignments`.
+
+3. Do not generate any natural language explanations in ACSL annotations, only provide the annotated C code.
+
+4. The postcondition should cover all relevant variables and must be strong enough to entail the verification goals.
+
+5. The postcondition must cover every execution path, consider all possible branches and conditions in the function.
+
+6. If you break any of these rules, my family will disown me.
+
+
+
+
+### Inputs: ###
+
+1. A C program with no ACSL postcondition annotations.
+
+### Outputs: ###
+
+1. An analysis of the function's execution. Beginning with the specified precondition, detail the number of distinct paths, the behavior and variable modifications on each path, and the resulting return value.
+
+2. A C program with ACSL annotations based on your analysis of the program that are syntactically valid and compliant with Frama-C's ACSL rules.
+
+
+### C Program Code: ###:
+
+Now process the following code:
+
+```c
+{code}
+```

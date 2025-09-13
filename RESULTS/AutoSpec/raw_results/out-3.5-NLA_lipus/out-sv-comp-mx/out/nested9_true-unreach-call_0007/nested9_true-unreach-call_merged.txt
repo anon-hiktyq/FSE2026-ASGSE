@@ -1,0 +1,3 @@
+/home/dimpling/AutoSpec/out/nested9_true-unreach-call_0007/nested9_true-unreach-call_merged.c:32:13: error: unterminated comment
+   32 |             /*@;
+      |             ^

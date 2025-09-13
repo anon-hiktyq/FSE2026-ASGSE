@@ -1,0 +1,18 @@
+/*@
+requires n > 0;
+*/
+void foo(int n)
+{
+    int x = 0;
+    int m = 0;
+
+    /* @ >>> INFILL <<< */
+    while (x < n) {
+        if (unknown()) {
+            m = x;
+        }
+        x = x + 1;
+    }
+
+
+}

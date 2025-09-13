@@ -1,0 +1,3 @@
+/home/yangfp/AutoSpec/AutoSpec1/out/0016_0002/0016_merged.c:36:3: error: unterminated comment
+   36 |   /*@;
+      |   ^

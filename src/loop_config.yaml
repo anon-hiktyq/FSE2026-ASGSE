@@ -1,0 +1,27 @@
+# 代码分析器配置
+code_analyzer:
+  root_dir: "motivation_example"
+  function_name: "foo"
+  debug: true
+  only_loop: true
+  list_loop: false
+  auto_annotation: true
+  refine_count: 3
+  pass_count: 5
+  think: true
+  template: true
+  auto_post: true
+  use_db: false
+
+# LLM配置
+llm:
+  api_model: "gpt-4o"
+  api_key: "sk-9dnxPHHwjlTiAlH0uUoKwiW79Hs51AGpqUSRj9DvZurLZx1R"
+  base_url: "https://yunwu.ai/v1"
+  api_temperature: 0.7
+  api_top_p: 0.7
+  think_mode_enabled: false
+
+# 前置条件配置
+preconditions:
+  foo: "emp"

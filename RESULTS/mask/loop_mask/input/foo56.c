@@ -1,0 +1,19 @@
+
+
+/*@ 
+requires 0 <= k && k <= 1;
+*/
+void  foo56(int k) {
+    int i,j;
+    i = 1;
+    j = 1;
+   
+
+    while (i < 1000000) {
+        i = i + 1;
+        j = j + k;
+        k = k - 1;
+        /* mask_1 */
+    }
+    
+}

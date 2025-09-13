@@ -1,0 +1,28 @@
+
+int unknown();
+
+
+void foo58() {
+
+
+  int w = 1;
+  int z = 0;
+  int x = 0;
+  int y = 0;
+
+
+  while(unknown()){
+  	if(w) {
+  	  x++;
+  	  w = !w;
+	  }
+	
+    if(!z) {
+      y++; 
+      z=!z;
+    }
+  }
+
+  /* mask_1 */
+  
+}

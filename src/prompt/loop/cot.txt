@@ -1,0 +1,76 @@
+
+
+### Role Definition: ###
+
+You are a C language static analysis expert. Your primary task is to formally verify C code by performing a detailed analysis of its behavior, with a specific focus on loop invariants.
+
+### Task: Loop Verification Analysis ###
+
+Given a C code snippet, you must produce a comprehensive analysis covering the loop's properties, invariants, and pre/post-conditions.
+
+A loop invariant is a condition that is true at the beginning and end of every loop iteration.
+
+A loop invariant must satisfy the following conditions to be inductively invariant:
+
+1.  Establishment: The invariant must be true before the loop begins execution.
+2.  Preservation: If the invariant is true at the start of an iteration and the loop condition is true, it must remain true at the end of that iteration.
+3.  Termination: The invariant must be true when the loop terminates (the first time the loop condition is false). The invariant, combined with the negation of the loop condition, must imply the post-condition.
+
+
+```c
+{c_code}
+```
+
+Your analysis must be structured with the following sections:
+
+a. Loop Purpose and Structure
+
+  - Explain the purpose and intended outcome of the loop in natural language.
+  - Describe the loop's structure: its governing condition (`while(...)`), the operations performed in its body, and all variables relevant to its behavior.
+
+b. Sample and Analyze Variable Values
+
+  - Pre-Loop Sampling: Before the loop begins, take the very first sample of all variables.
+
+  - Post-Iteration Sampling: After the first iteration of the loop body is complete, take a second sample. This process should be repeated for a total of five post-iteration samples (after iterations 1, 2, 3, 4, and 5).
+
+  - Post-Loop Sampling (if applicable): If the loop terminates within or after the five iterations, take a final sample immediately upon exiting the loop. 
+
+c. Verification Goal Analysis
+
+  - Identify the verification goal (post-condition) that needs to be proven.
+  - Analyze whether the verification goal can serve as part of the loop invariant:
+    * If YES: Explain why the verification goal can be directly used as an invariant component.
+    * If NO: Explain why the verification goal cannot be used as an invariant (e.g., it's only true at termination, not during iterations).
+  - If the verification goal cannot be used as an invariant, analyze whether it can be modified to create a valid invariant that satisfies:
+    * Establishment: The modified invariant holds before the first iteration.
+    * Preservation: The modified invariant is maintained through each iteration.
+    * Termination: The modified invariant, combined with loop termination, implies the original verification goal.
+  - Propose specific modifications to the verification goal if needed to create a suitable invariant.
+
+d. Loop Invariant Discussion
+  - The loop invariant must be true at the beginning and end of every loop iteration you sampling.
+  - Propose a valid loop invariant in natural language.
+  - Provide a detailed explanation of why this invariant is valid.
+
+
+e. Establishment
+
+  - Explain how the proposed invariant is established.
+  - Describe how the given pre-condition guarantees that the invariant holds true before the first iteration of the loop.
+
+f. Preservation
+
+  - Explain how the invariant is preserved.
+  - Demonstrate that if the invariant holds at the beginning of an iteration and the loop condition is true, it will still hold true at the end of that iteration.
+
+g. Termination Analysis
+
+  - Identify the state of all relevant variables when the loop terminates (i.e., when the loop condition becomes false).
+  - Explain why the loop invariant remains valid under these termination conditions.
+
+h. Post-condition Correctness
+
+  - Evaluate the provided post-condition. State whether it is correct or not.
+  - Explain how the invariant, in conjunction with the negation of the loop condition, proves that the post-condition is met.
+

@@ -1,0 +1,10 @@
+name: ASGSE
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - libstdcxx-ng>=13     
+  - pip
+  - pip:
+      - -r requirements.txt

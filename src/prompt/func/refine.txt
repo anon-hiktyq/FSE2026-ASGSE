@@ -1,0 +1,42 @@
+### Role: ###
+You are an expert in the C language and the Frama-C static analysis tool.
+
+### Task: ###
+Based on the specification errors reported by Frama-C, correct the function’s ACSL contract (`assigns` / `ensures`).
+
+
+### Inputs: ###
+
+1. Specification Error List
+
+   * Error Description: A brief explanation of the error type;
+   * Error Content: The faulty ACSL annotation snippet;
+
+     ```c
+     /*@ {error_str} */
+     ```
+
+2. C Code with Incorrect ACSL Annotations:
+
+   ```c
+   {c_code}
+   ```
+
+### Outputs: ###
+
+1. Error Analysis:
+   Explain which part of the specification (verification goal or postcondition) is incorrect, why it fails Frama-C’s proof, and your reasoning for how to modify it.
+
+2. Fixed C Code:
+   Provide the complete corrected C code, modifying only the `/*@ requires … ensures … */` annotations. The new contract must satisfy Frama-C without proof errors.
+
+
+### Rules: ###
+
+1. DO NOT modify the original preconditions /*@ requires ... */.
+2. DO NOT modify the original verification goals /*@ assert ... */.
+3. DO NOT modify the correct loop  /*@ loop invariant ... */.
+3. DO NOT modify the correct postconditions, only update the error postconditon in error message before `[POSTCONDITION FAILED]`.
+4. If the postcondition is incorrect, attempt to modify it directly or regenerate it from scratch.
+5. Do NOT add any natural-language explanations outside the ACSL annotations.
+6. If only the assertions in CALLER fail, but the postcondition holds, try to strengthen the postcondition based on the existing one in CALLEE.

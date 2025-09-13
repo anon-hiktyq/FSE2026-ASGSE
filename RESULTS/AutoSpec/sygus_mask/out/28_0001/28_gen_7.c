@@ -1,0 +1,15 @@
+/*@
+requires x == n;
+requires x != 0;
+*/
+void foo(int x, int n) { 
+  // loop body
+  /*@
+  loop invariant 0 <= x <= n;
+  loop assigns x;
+  */
+  while (x > 0) {
+    x  = x - 1;
+  }
+
+}

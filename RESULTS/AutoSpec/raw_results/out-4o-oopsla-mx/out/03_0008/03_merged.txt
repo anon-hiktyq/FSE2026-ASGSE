@@ -1,0 +1,3 @@
+/home/dimpling/AutoSpec/out/03_0008/03_merged.c:41:5: error: unterminated comment
+   41 |     /*@;
+      |     ^
