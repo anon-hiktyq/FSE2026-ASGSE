@@ -3,41 +3,41 @@ import argparse
 
 class SyntaxChecker:
     def __init__(self):
-        self.syntax_msg = ""  # 用于存储所有Output内容
+        self.syntax_msg = ""  # Used to store all output content
 
     def parse_args(self):
-        """设置命令行参数解析器"""
+        """Set up command line argument parser"""
         parser = argparse.ArgumentParser(description="Run Frama-C WP on a C file.")
         parser.add_argument('file_name', help="Path to the C file to analyze")
         return parser.parse_args()
 
     def run(self, file_name=None):
-        """运行 Frama-C WP 命令并处理Output"""
+        """Run Frama-C WP command and process output"""
         if file_name is None:
-            # 如果没有传入 file_name，从命令行参数获取
+            # If no file_name passed, get from command line arguments
             args = self.parse_args()
             file_path = args.file_name
         else:
-            # 如果传入了 file_name，直接使用
+            # If file_name passed, use it directly
             file_path = file_name
 
-        # 生成 WP 验证命令
+        # Generate WP verification command
         wp_command = [
             "frama-c",
             "-wp",
             "-wp-print",
             "-wp-timeout",
-            "10",
+            "3",
             file_path
         ]
 
         try:
-            # 使用 subprocess.run 运行命令，并捕获Output
+            # Use subprocess.run to execute command and capture output
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             self.syntax_msg = "syntax Correct"
         except subprocess.CalledProcessError as e:
-            # 如果命令执行失败，捕获Error信息
-            self.syntax_msg = "syntax Error\n" + e.stdout  # 将Error信息存入 syntax_msg
+            # If command execution fails, capture error information
+            self.syntax_msg = "syntax Error\n" + e.stdout  # Store error information in syntax_msg
 
         # print(self.syntax_msg)
 
