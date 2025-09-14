@@ -1,29 +1,125 @@
 import argparse
 import subprocess
-import logging
-from .syntax_checker import SyntaxChecker
-from config import CodeAnalyzerConfig
+from syntax_checker import SyntaxChecker
 import re
 
 class OutputVerifier:
-    def __init__(self,config:CodeAnalyzerConfig,logger:logging.Logger,output:bool=False):
-        self.config = config
-        self.logger = logger
-        self.output = output
+    def __init__(self):
+        self.file_name = None
         self.syntax_error = ''
-        self.valid_error_list = []
-        self.verify_error_list = []
-        self.verify_result = []
-        self.validate_result =[]
-        
+        self.syntax_bool = None
+        self.loop_error_list = []
+        self.assert_error_list = []
+        self.post_error_list = []
+        self.loop_result = []
+        self.assert_result =[]
+        self.post_result =[]
+       
 
     def print_errors(self, error_list):
         for error in error_list:
-            print(error[0].splitlines()[0])  # Print error description
+            print(error[0])  # Print error description
             print(error[1])  # Print error file location
             print(error[2])  # Print error line content
             print()
     
+    def log_errors(self):
+        # Create a string to store log content
+        log_content = ""
+
+        # Add filename
+        log_content += f"File Name: {self.file_name}\n\n"
+
+        # Add syntax_error
+        log_content += "Syntax Error:\n"
+        log_content += f"{self.syntax_error}\n\n"
+
+        # Add Loop Invariant Errors
+        log_content += "Loop Invariant Errors:\n"
+        if self.loop_error_list:
+            for error in self.loop_error_list:
+                log_content += f"- {error}\n"
+        else:
+            log_content += "No Loop Invariant Errors.\n"
+        log_content += "\n"
+
+        # Add Loop Invariant Results
+        log_content += "Loop Invariant Results:\n"
+        if self.loop_result:
+            for result in self.loop_result:
+                log_content += f"- {result}\n"
+        else:
+            log_content += "No Loop Invariant Results.\n"
+        log_content += "\n"
+
+        # Add Assertion Errors
+        log_content += "Assertion Errors:\n"
+        if self.assert_error_list:
+            for error in self.assert_error_list:
+                log_content += f"- {error}\n"
+        else:
+            log_content += "No Assertion Errors.\n"
+        log_content += "\n"
+
+        # Add Assertion Results
+        log_content += "Assertion Results:\n"
+        if self.assert_result:
+            for result in self.assert_result:
+                log_content += f"- {result}\n"
+        else:
+            log_content += "No Assertion Results.\n"
+        log_content += "\n"
+
+        # Add Postcond Errors
+        log_content += "Postcond Errors:\n"
+        if self.post_error_list:
+            for error in self.post_error_list:
+                log_content += f"- {error}\n"
+        else:
+            log_content += "No Postcond Errors.\n"
+        log_content += "\n"
+
+        # Add Postcond Results
+        log_content += "Postcond Results:\n"
+        if self.post_result:
+            for result in self.post_result:
+                log_content += f"- {result}\n"
+        else:
+            log_content += "No Postcond Results.\n"
+        log_content += "\n"
+
+        # Add separator line
+        log_content += '------------------------------------------------\n'
+
+        # Return log content
+        return log_content
+
+    def log_accury(self):
+        
+        def calculate_accuracy(bool_array):
+            if not bool_array:  # If array is empty, return 0
+                return 0.0
+            return (sum(bool_array) / len(bool_array)) * 100  # Convert to percentage
+        
+        loop_accuracy = calculate_accuracy(self.loop_result)
+        assert_accuracy = calculate_accuracy(self.assert_result)
+        post_accuracy = calculate_accuracy(self.post_result)
+        
+
+        # Calculate total accuracy
+        combined_results = self.loop_result + self.assert_result + self.post_result
+        total_accuracy = calculate_accuracy(combined_results)
+        
+        accuracy_log = f'''
+File Name: {self.file_name}
+synatax_accuracy: {self.syntax_bool}
+loop_accuracy:  {loop_accuracy:.2f}% ({sum(self.loop_result)}/{len(self.loop_result)})
+assert_accuracy:  {assert_accuracy:.2f}% ({sum(self.assert_result)}/{len(self.assert_result)})
+post_accuracy:  {post_accuracy:.2f}%  ({sum(self.post_result)}/{len(self.post_result)})
+total_accuracy:  {total_accuracy:.2f}% ({sum(combined_results)}/{len(combined_results)})
+'''
+        # print(accuracy_log)
+        return accuracy_log
 
     def extract_semantic_error(self,error_message):
         # Use regular expression to extract filename and line number
@@ -58,7 +154,7 @@ class OutputVerifier:
             return None, None
     
 
-    def check_valid_pairs(self, filter_invs):
+    def check_pairs(self, filter_invs):
         results = []
         # Group by adjacent identical elements
         for i in range(0, len(filter_invs), 2):
@@ -68,7 +164,7 @@ class OutputVerifier:
                 results.append(False)
         return results
 
-    def check_verify_target(self, filter_contents):
+    def check_target(self, filter_contents):
         results = []
         for content in filter_contents:
             if 'Valid' in content:
@@ -78,11 +174,16 @@ class OutputVerifier:
         return results
 
     def filter_goal_assertion(self, contents):
-        return [line for line in contents if line.strip().startswith("Goal Assertion (")]
+        return [line for line in contents if line.strip().startswith("Goal Assertion ") or line.strip().startswith("Goal Assigns ")]
 
     def filter_invariant(self, contents):
         return [line for line in contents if line.strip().startswith("Goal Establishment of Invariant") or line.strip().startswith("Goal Preservation of Invariant")]
 
+    def filter_post_condition(self, contents):
+        return [line for line in contents if line.strip().startswith("Goal Post-condition ")]
+    
+
+    
     def parse_args(self):
         parser = argparse.ArgumentParser(description="Run Frama-C WP on a C file.")
         parser.add_argument('file_name', help="Path to the C file to analyze")
@@ -91,10 +192,12 @@ class OutputVerifier:
     def run(self,file_name=None):
 
         if file_name != None:
-            file_path = f"{self.config.generated_loop_c_file_path}/{file_name}.c"
+            file_path = f"{file_name}"
+            self.file_name = file_name
         else :
             args = self.parse_args()
-            file_path = f"{self.config.generated_loop_c_file_path}/{args.file_name}.c"
+            file_path = f"{args.file_name}"
+            self.file_name = args.file_name
 
         # syntax_msg = subprocess.run(['python3', 'syntaxChecker.py', file_path], capture_output=True, text=True).stdout
         # print(syntax_msg)
@@ -102,49 +205,65 @@ class OutputVerifier:
         checker = SyntaxChecker()
         checker.run(file_path)
         syntax_msg = checker.syntax_msg
-
-        if self.config.debug and self.output:
-                self.logger.info(syntax_msg)
+        print(syntax_msg)
 
         if syntax_msg !='syntax Correct':
             self.syntax_error = syntax_msg
+            self.syntax_bool = False
         else:
+            self.syntax_bool = True
             frama_c_command = "frama-c"
+            #wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "5", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
-            # wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             spliter = '------------------------------------------------------------'
             content = result.stdout
+            print(content)
             contents = content.split(spliter)
-
+            
+    
             filter_invs = self.filter_invariant(contents)
-            self.validate_result = self.check_valid_pairs(filter_invs)
+            self.loop_result = self.check_pairs(filter_invs)
 
             for item in filter_invs:
                 if 'Valid' not in item:
-                    valid_error_msg = item
-                    error_location_msg, error_content_msg = self.extract_semantic_error(valid_error_msg)
-                    self.valid_error_list.append((valid_error_msg.strip(), error_location_msg, error_content_msg))
+                    loop_error_msg = item
+                    error_location_msg, error_content_msg = self.extract_semantic_error(loop_error_msg)
+                    self.loop_error_list.append((loop_error_msg.strip(), error_location_msg, error_content_msg))
 
-            if self.config.debug and self.output:
-                self.logger.info('Validate:')
-                self.logger.info(self.validate_result)
-                self.logger.info('')
-                self.print_errors(self.valid_error_list)
+            print('Loop Invariant:')
+            print(self.loop_result)
+            print()
+            #self.print_errors(self.loop_error_list)
 
             filter_contents = self.filter_goal_assertion(contents)
-            self.verify_result = self.check_verify_target(filter_contents)
+            self.assert_result = self.check_target(filter_contents)
 
             for item in filter_contents:
                 if 'Valid' not in item:
-                    verify_error_msg = item
-                    error_location_msg, error_content_msg = self.extract_semantic_error(verify_error_msg)
-                    self.verify_error_list.append((verify_error_msg.strip(), error_location_msg, error_content_msg))
-            if self.config.debug and self.output:
-                self.logger.info('Verify:')
-                self.logger.info(self.verify_result)
-                self.logger.info('')
-                self.print_errors(self.verify_error_list)
+                    assert_error_msg = item
+                    error_location_msg, error_content_msg = self.extract_semantic_error(assert_error_msg)
+                    self.assert_error_list.append((assert_error_msg.strip(), error_location_msg, error_content_msg))
+
+            print('Assertion:')
+            print(self.assert_result)
+            print()
+            #self.print_errors(self.assert_error_list)
+
+            filter_postconds = self.filter_post_condition(contents)
+            self.post_result = self.check_target(filter_postconds)
+            
+            for item in filter_postconds:
+                if 'Valid' not in item:
+                    post_error_msg = item
+                    error_location_msg, error_content_msg = self.extract_semantic_error(post_error_msg)
+                    self.post_error_list.append((post_error_msg.strip(), error_location_msg, error_content_msg))
+            
+            print('Post Condition:')
+            print(self.post_result)
+            print()
+            #self.print_errors(self.post_error_list)
+
 
     
 
