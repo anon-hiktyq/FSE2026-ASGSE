@@ -71,7 +71,7 @@ def run_from_config(config_path: str, function_name: str = None, root_dir: str =
         if not main_config.root_dir:
             raise ValueError("Must specify project root directory (via config file or --root-dir parameter)")
         
-        print(f"🚀 Starting analysis of function: {main_config.function_name}")
+        print(f"🚀 Starting specification generation for function: {main_config.function_name}")
         print(f"📁 Project directory: {main_config.root_dir}")
         print(f"📄 Configuration file: {config_path}")
         print(f"🤖 Using model: {model_name}")
