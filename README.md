@@ -1,6 +1,6 @@
 # ASGSE
 
-ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for C programs. It offers a complete workflow, including dedicated runners and comprehensive logging capabilities, and is submitted as an FSE 2026 artifact for "Integrating Symbolic Execution with LLMs for Automated Program Specifications Generation."
+ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for C programs. It is submitted as an FSE 2026 artifact for "Integrating Symbolic Execution with LLMs for Automated Program Specifications Generation."
 
 ### Overview of ASGSE
 
@@ -8,6 +8,9 @@ ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for
 
 ### Repository Structure
 - `src/`: Main source for specification generation workflows
+  - `input/`: input dictionary, input programs with manually annotate ACSL format preconditions and verification goals
+  - `output/`: output dictionary, output programs with complete ACSL format specifications
+
 - `APPENDIX/`: The appendix of our paper
 - `RESULTS/`: Raw experiment results
 - `VST/`: Symbolic executor
@@ -91,7 +94,7 @@ Two configuration file formats are supported:
 
 ##### 1. Main process configuration
 
-This section contains settings for the program specification generation process.
+This section contains settings for the program specifications generation process.
 
 ```yaml
 code_analyzer:
@@ -125,7 +128,7 @@ llm:
 
 ##### 3. Precondition Configuration
 
-This section allows you to define customized preconditions in VST user assertion for specific functions. You should add same preconditions in ACSL directly in input file.
+This section allows you to define custom preconditions in VST user assertion for specific functions. You should add same preconditions in ACSL format directly in input file.
 
 ```yml
 preconditions:
@@ -182,5 +185,4 @@ Display the help message for a list of available options:
 ```bash
 python main.py --help
 ```
-
 

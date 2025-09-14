@@ -2,23 +2,23 @@ from dataclasses import dataclass
 
 @dataclass
 class CodeAnalyzerConfig:
-    """代码分析器全局配置类
+    """Global configuration class for code analyzer
     
-    属性:
-        root_dir (str): 项目根目录路径
-        input_dir (str): 预处理Input directory（默认'2_input'）
-        annotated_c_dir (str): 带VST格式注释的中间目录（默认'1_output'）
-        annotated_loop_dir (str): 完整循环注释目录（默认'2_output'）
-        generated_loop_dir (str): ACSL格式不变量生成目录（默认'3_output'）
-        output_dir (str): 最终Output目录（默认'output'）
+    Attributes:
+        root_dir (str): Project root directory path
+        input_dir (str): Preprocessed input directory (default 'input')
+        annotated_c_dir (str): Intermediate directory with VST format annotations (default '1_output')
+        annotated_loop_dir (str): Complete loop annotation directory (default '2_output')
+        generated_loop_dir (str): ACSL format invariant generation directory (default '3_output')
+        output_dir (str): Final output directory (default 'output')
     """
-    """配置参数类"""
-    root_dir: str = None  # 原始Input
-    input_dir: str = 'input' # 统一格式的Input，可以手动注入 acsl 格式的前条件以及验证目标
-    annotated_c_dir: str = '1_output' # vst 格式注释过前条件的，可以手动注入 vst 格式的前条件以及验证目标
-    annotated_loop_dir:str = '2_output' # vst 格式完整注释
-    generated_loop_dir :str = '3_output' # acsl 格式注释过前条件 验证目标 不变量
-    output_dir:str = 'output' # acsl 格式完整注释
+    """Configuration parameter class"""
+    root_dir: str = None  # Original input
+    input_dir: str = 'input' # Unified format input, can manually inject ACSL format preconditions and verification targets
+    annotated_c_dir: str = '1_output' # VST format annotated preconditions, can manually inject VST format preconditions and verification targets
+    annotated_loop_dir:str = '2_output' # VST format complete annotations
+    generated_loop_dir :str = '3_output' # ACSL format annotated preconditions, verification targets, invariants
+    output_dir:str = 'output' # ACSL format complete annotations
     log_dir:str = 'log'
 
     
@@ -35,16 +35,16 @@ class CodeAnalyzerConfig:
     only_loop:bool = True 
     list_loop:bool = False
 
-    # T 以 input_dir 为唯一Input 
-    # F 以 input_dir 和 preconditions 为Input
+    # T: Use input_dir as the only input
+    # F: Use input_dir and preconditions as input
     auto_annotation:bool = True
 
-    # ablation
+    # Ablation study parameters
     refine_count:int = 3
     pass_count:int = 5
     think:bool = True
     template:bool = True
-    auto_post:bool = True # 是否自动生成后条件
+    auto_post:bool = True # Whether to automatically generate postconditions
     
 
 
@@ -53,12 +53,12 @@ class CodeAnalyzerConfig:
 
 @dataclass
 class LLMConfig:
-    # API 模型的配置
-    use_api_model = True # 控制是使用 API 模型还是本地 Transformers 模型
-    api_model:str = "gpt-4o" # API 模型的Name，例如 "gpt-4o"
-    api_key:str = "your-api-key" # 你的 OpenAI 或兼容 API 的密钥
-    base_url:str = "your-base-url" # API 的 base_url
-    api_temperature = 0.7 # API 调用的温度参数
+    # API model configuration
+    use_api_model = True # Control whether to use API model or local Transformers model
+    api_model:str = "gpt-4o" # API model name, e.g., "gpt-4o"
+    api_key:str = "your-api-key" # Your OpenAI or compatible API key
+    base_url:str = "your-base-url" # API base URL
+    api_temperature = 0.7 # Temperature parameter for API calls
     api_top_p=0.7
     think_mode_enabled = False
     
