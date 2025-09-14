@@ -7,9 +7,9 @@ ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for
 ![workflow](./images/workflow.png)
 
 ### Repository Structure
-- `src/`: Main source for spec generation and loop invariant workflows
+- `src/`: Main source for specification generation workflows
 - `APPENDIX/`: The appendix of our paper
-- `RESULTS/`: Raw experiments results
+- `RESULTS/`: Raw experiment results
 - `VST/`: Symbolic executor
 
 ### Requirements
