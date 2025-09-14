@@ -55,7 +55,7 @@ def run_from_config(config_path: str, function_name: str = None, root_dir: str =
     """
     try:
         # Load configuration file
-        main_config, llm_config, preconditions, model_name = load_config_from_file(config_path)
+        main_config, preconditions, model_name = load_config_from_file(config_path)
         
         # Apply command line argument overrides
         if function_name:

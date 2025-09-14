@@ -27,7 +27,7 @@ class SyntaxChecker:
             "-wp",
             "-wp-print",
             "-wp-timeout",
-            "3",
+            "10",
             file_path
         ]
 

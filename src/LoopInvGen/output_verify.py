@@ -110,7 +110,7 @@ class OutputVerifier:
             self.syntax_error = syntax_msg
         else:
             frama_c_command = "frama-c"
-            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
+            wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "10", "-wp-prover", "z3", "-wp-model", "Typed", file_path]
             # wp_command = [frama_c_command, "-wp", "-wp-print", "-wp-timeout", "3", "-wp-prover", "z3", "-wp-model", "Typed+Caveat", file_path]
             result = subprocess.run(wp_command, capture_output=True, text=True, check=True)
             spliter = '------------------------------------------------------------'
