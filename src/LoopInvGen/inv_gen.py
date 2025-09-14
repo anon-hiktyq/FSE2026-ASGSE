@@ -6,7 +6,7 @@ import logging
 from .loop_analysis import LoopAnalysis
 from .output_verify import OutputVerifier
 from .loop_processor import LoopProcessor
-from config import CodeAnalyzerConfig,LLMConfig
+from config import MainConfig,LLMConfig
 from llm import *
 from convertor import SpecificationConvertor
 from Utils.main_class import FunctionInfo
@@ -16,7 +16,7 @@ from spec_gen import SpecGenerator
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 class InvGenerator:
-    def __init__(self,config:CodeAnalyzerConfig,info:FunctionInfo,logger:logging.Logger,vector_db:LangChainVectorDB,llm_config:LLMConfig,spec_gen:SpecGenerator = None):
+    def __init__(self,config:MainConfig,info:FunctionInfo,logger:logging.Logger,vector_db:LangChainVectorDB,llm_config:LLMConfig,spec_gen:SpecGenerator = None):
         
         self.config =config
         self.info = info

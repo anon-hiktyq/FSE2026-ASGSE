@@ -13,7 +13,7 @@ from Utils.extract_all import function_info_init,free_all_tu
 from Utils.main_class import *
 from Utils.remove_macro import process_all_c_files
 from specification_verify import SpecVerifier
-from config import CodeAnalyzerConfig,LLMConfig
+from config import MainConfig,LLMConfig
 from convertor import SpecificationConvertor
 from spec_gen import SpecGenerator
 from DSL.Q2D import Post2DSL
@@ -137,16 +137,16 @@ def _setup_analysis_logger(function_name: str, log_dir: str,  debug: bool = Fals
 class FunctionProcessor:
     """Main function processing class"""
     
-    def __init__(self, config: CodeAnalyzerConfig,preconditions: Dict[str, Union[str, Tuple[str, Optional[str]]]] = None, model_name:str = 'gpt-4o') -> None:
+    def __init__(self, config: MainConfig,preconditions: Dict[str, Union[str, Tuple[str, Optional[str]]]] = None, model_name:str = 'gpt-4o') -> None:
         """Main processor constructor
         
         Args:
-            config (CodeAnalyzerConfig): Analyzer configuration object
+            config (MainConfig): Analyzer configuration object
         
         Raises:
             ValueError: When Input configuration is invalid
         """
-        if not isinstance(config, CodeAnalyzerConfig):
+        if not isinstance(config, MainConfig):
             raise ValueError("Invalid config type")
     
         self.config = config

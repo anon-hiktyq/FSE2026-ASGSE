@@ -2,7 +2,7 @@ import logging
 from z3 import *
 from .AST import *
 from functools import lru_cache
-from config import CodeAnalyzerConfig
+from config import MainConfig
     
 
 class Post2DSL:
@@ -11,7 +11,7 @@ class Post2DSL:
     Currently, it generates generic range constraints for demonstration.
     """
 
-    def __init__(self, acsl_ensures_string: str, variables_list: list, config: CodeAnalyzerConfig,logger:logging.Logger) -> None:
+    def __init__(self, acsl_ensures_string: str, variables_list: list, config: MainConfig,logger:logging.Logger) -> None:
         """
         后置条件转换器初始化方法
 

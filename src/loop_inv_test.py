@@ -6,7 +6,7 @@
 
 import os
 import json
-from main_processor import CodeAnalyzerConfig, FunctionProcessor
+from main import MainConfig, FunctionProcessor
 
 def list_files_os(folder_path):
     file_names = []
@@ -394,7 +394,7 @@ def test_dataset(dataset_name, model_name="gpt-4o"):
         print(f"🔄 Processing file: {name}")
 
         # 创建配置对象
-        config_obj = CodeAnalyzerConfig(
+        config_obj = MainConfig(
             root_dir=config['root_dir'],
             function_name=function_name,
             **config['config_params']

@@ -1,5 +1,5 @@
 {
-  "code_analyzer": {
+  "main": {
     "root_dir": "motivation_example",
     "function_name": "foo",
     "debug": true,
@@ -18,8 +18,7 @@
     "api_key": "your-api-key",
     "base_url": "your-base-url",
     "api_temperature": 0.7,
-    "api_top_p": 0.7,
-    "think_mode_enabled": false
+    "api_top_p": 0.7
   },
   "preconditions": {
     "foo": "emp"

@@ -99,14 +99,14 @@ This section contains settings for the program specifications generation process
 ```yaml
 code_analyzer:
   root_dir: "motivation_example"      # Project root directory
-  function_name: "foo1"               # Name of the function to analyze
+  function_name: "foo"                # Name of the function to generate
   debug: true                         # Enable debug mode
   only_loop: false                    # Only generate loop invariant
   auto_annotation: true               # Automated generate precondition
   refine_count: 3                     # Number of refinement passes
   pass_count: 5                       # Number of passes
   think: true                         # Enable "think in natural language" mode
-  template: true                      # Enable template
+  template: true                      # Enable loop invariant template
   auto_post: true                     # Automated generate postconditions
   use_db: false                       # Enable database
 ```
@@ -120,10 +120,9 @@ llm:
   use_api_model: true                 # Use an API model
   api_model: "gpt-4o"                 # API model name
   api_key: "your-api-key"             # API key
-  base_url: "https://yunwu.ai/v1"     # API base URL
+  base_url: "your-base-url"     # API base URL
   api_temperature: 0.7                # API temperature parameter
   api_top_p: 0.7                      # API top_p parameter
-  think_mode_enabled: false           # Enable "think " mode
 ```
 
 ##### 3. Precondition Configuration
@@ -140,7 +139,7 @@ preconditions:
 
 ##### 1.Basic Usage
 
-Use the default configuration file (e.g., `config.json`):
+Use the default configuration file (e.g., `func_config.json`):
 
 ```bash
 python main.py

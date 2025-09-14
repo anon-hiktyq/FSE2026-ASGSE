@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 @dataclass
-class CodeAnalyzerConfig:
-    """Global configuration class for code analyzer
+class MainConfig:
+    """Global configuration class for main process
     
     Attributes:
         root_dir (str): Project root directory path

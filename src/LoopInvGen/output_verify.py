@@ -2,11 +2,11 @@ import argparse
 import subprocess
 import logging
 from .syntax_checker import SyntaxChecker
-from config import CodeAnalyzerConfig
+from config import MainConfig
 import re
 
 class OutputVerifier:
-    def __init__(self,config:CodeAnalyzerConfig,logger:logging.Logger,output:bool=False):
+    def __init__(self,config:MainConfig,logger:logging.Logger,output:bool=False):
         self.config = config
         self.logger = logger
         self.output = output

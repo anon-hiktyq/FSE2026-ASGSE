@@ -4,10 +4,10 @@ import os
 import re
 import json
 from Utils.main_class import *
-from config import CodeAnalyzerConfig
+from config import MainConfig
 
 class LoopProcessor:
-    def __init__ (self, info : FunctionInfo, config: CodeAnalyzerConfig):
+    def __init__ (self, info : FunctionInfo, config: MainConfig):
         """
         Initialize LoopProcessor object.
         :param file_name: Filename (without extension)

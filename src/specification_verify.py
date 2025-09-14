@@ -2,11 +2,11 @@ import argparse
 import subprocess
 import logging
 from LoopInvGen.syntax_checker import SyntaxChecker
-from config import CodeAnalyzerConfig
+from config import MainConfig
 import re
 
 class SpecVerifier:
-    def __init__(self,config:CodeAnalyzerConfig,logger:logging.Logger = None):
+    def __init__(self,config:MainConfig,logger:logging.Logger = None):
         self.config = config
         self.logger = logger
         self.file_name = None

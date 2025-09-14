@@ -11,7 +11,7 @@ from pre_cond_manager import PreconditionsManager
 
 class SpecGenerator:
 
-    config: CodeAnalyzerConfig
+    config: MainConfig
 
     function_info: FunctionInfo
     function_info_list: list[FunctionInfo]
@@ -26,7 +26,7 @@ class SpecGenerator:
     llm: Chatbot
 
 
-    def __init__(self,function_info: FunctionInfo, function_info_list: list[FunctionInfo], global_type_info_dict: dict,config: CodeAnalyzerConfig,logger: logging.Logger,llm_config:LLMConfig,precond_manager: PreconditionsManager):
+    def __init__(self,function_info: FunctionInfo, function_info_list: list[FunctionInfo], global_type_info_dict: dict,config: MainConfig,logger: logging.Logger,llm_config:LLMConfig,precond_manager: PreconditionsManager):
         self.function_info = function_info
         self.function_info_list = function_info_list
         self.annotated_c_file_path = config.annotated_c_file_path
