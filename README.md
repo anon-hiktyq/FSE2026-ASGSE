@@ -117,12 +117,7 @@ This section holds settings for the Large Language Model (LLM) integration.
 
 ```yml
 llm:
-  use_api_model: true                 # Use an API model
   api_model: "gpt-4o"                 # API model name
-  api_key: "your-api-key"             # API key
-  base_url: "your-base-url"     # API base URL
-  api_temperature: 0.7                # API temperature parameter
-  api_top_p: 0.7                      # API top_p parameter
 ```
 
 ##### 3. Precondition Configuration
