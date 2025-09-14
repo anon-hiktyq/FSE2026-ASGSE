@@ -80,7 +80,7 @@ def run_from_config(config_path: str, function_name: str = None, root_dir: str =
         processor = FunctionProcessor(main_config, preconditions, model_name)
         processor.run_analysis()
         
-        print("✅ Analysis completed!")
+        print("✅ Generation completed!")
         
     except Exception as e:
         print(f"❌ Run failed: {e}")
