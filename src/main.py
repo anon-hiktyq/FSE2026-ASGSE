@@ -67,7 +67,7 @@ def run_from_config(config_path: str, function_name: str = None, root_dir: str =
     
         # Validate required parameters
         if not main_config.function_name:
-            raise ValueError("Must specify function name to analyze (via config file or --function parameter)")
+            raise ValueError("Must specify function name to generate specification (via config file or --function parameter)")
         if not main_config.root_dir:
             raise ValueError("Must specify project root directory (via config file or --root-dir parameter)")
         
