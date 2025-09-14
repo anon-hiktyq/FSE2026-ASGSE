@@ -97,7 +97,7 @@ Two configuration file formats are supported:
 This section contains settings for the program specifications generation process.
 
 ```yaml
-code_analyzer:
+main:
   root_dir: "motivation_example"      # Project root directory
   function_name: "foo"                # Name of the function to generate
   debug: true                         # Enable debug mode
