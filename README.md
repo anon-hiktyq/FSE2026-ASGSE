@@ -8,7 +8,7 @@ ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for
 
 ### Repository Structure
 - `src/`: Main source for specification generation workflows
-  - `input/`: input dictionary, input programs with manually annotate ACSL format preconditions and verification goals
+  - `input/`: input dictionary, input programs with manually annotated ACSL format preconditions and verification goals
   - `output/`: output dictionary, output programs with complete ACSL format specifications
 
 - `APPENDIX/`: The appendix of our paper

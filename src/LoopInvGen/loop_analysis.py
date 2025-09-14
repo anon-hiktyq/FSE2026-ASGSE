@@ -5,8 +5,8 @@ import logging
 class LoopAnalysis:
     def __init__(self,json_file,idx,logger:logging.Logger):
         """
-        :param json_file: JSON 文件路径或数据
-        :param idx: 需要提取的循环索引
+        :param json_file: JSON file path or data
+        :param idx: Loop index to extract
         """
         self.logger = logger
         self.json_file = json_file
@@ -24,10 +24,10 @@ class LoopAnalysis:
 
     def get_json_at_index(self):
         with open(self.json_file, 'r') as file:
-            data = json.load(file)  # 读取并解析 JSON 文件
+            data = json.load(file)  # Read and parse JSON file
             
             if isinstance(data, list) and 0 <= self.idx < len(data):
-                return data[self.idx]  # 返回第 idx 个 JSON 对象
+                return data[self.idx]  # Return the idx-th JSON object
             else:
                 raise IndexError("Index out of range or data is not a list")
             
@@ -75,18 +75,18 @@ class LoopAnalysis:
                
                 m = re.match(rf"\s*{re.escape(var)}\s*=(?!=)", line)
                 if m:
-                    # 取等号右侧
+                    # Get the right side of the equals sign
                     right_side = line.split('=', 1)[1]
-                    # 检查右侧是否用到自己
+                    # Check if the right side uses itself
                     if not re.search(rf"\b{re.escape(var)}\b", right_side):
                         results.append(var)
         return results
 
 
     def extract_array_names(self):
-        array_names = set()  # 使用集合避免重复
+        array_names = set()  # Use set to avoid duplicates
         
-        # 从循环内容中提取数组
+        # Extract arrays from loop content
         loop = self.get_json_at_index()
         loop_content = loop.get("content", "")
         if loop_content:
@@ -101,44 +101,44 @@ class LoopAnalysis:
         length = len(pre_condition)
         
         while start < length:
-            # 查找 'store_int_array' 的位置
+            # Find position of 'store_int_array'
             func_idx = pre_condition.find('store_int_array', start)
             if func_idx == -1:
-                break  # 没有更多函数调用
+                break  # No more function calls
             
-            # 查找左括号的位置
+            # Find position of left parenthesis
             left_paren = pre_condition.find('(', func_idx)
             if left_paren == -1:
                 start = func_idx + 1
                 continue
             
-            # 查找右括号的位置
+            # Find position of right parenthesis
             right_paren = pre_condition.find(')', left_paren)
             if right_paren == -1:
                 start = func_idx + 1
                 continue
             
-            # 提取参数部分并分割
+            # Extract parameter part and split
             param_str = pre_condition[left_paren+1:right_paren].strip()
             params = [p.strip() for p in param_str.split(',')]
             
             if len(params) >= 3:
                 third_param = params[2]
-                # 去除末尾的 '_l'
+                # Remove trailing '_l'
                 if third_param.endswith('_l'):
                     third_param = third_param[:-2]
                 array_names.append(third_param)
             
-            # 继续查找下一个函数调用
+            # Continue searching for next function call
             start = right_paren + 1
         
         return array_names
     
     def _extract_from_loop_content(self, loop_content):
-        """从循环内容中提取所有数组名"""
+        """Extract all array names from loop content"""
         array_names = []
         
-        # 1. 匹配数组声明Mode
+        # 1. Match array declaration patterns
         array_decl_patterns = [
             r'\b(?:int|char|float|double|long|short|unsigned|signed)\s+(?:\*?\s*)(\w+)\s*\[',  # int arr[10], int* arr[10]
             r'\b(?:int|char|float|double|long|short|unsigned|signed)\s*\*\s*(\w+)\b',  # int* arr
@@ -149,18 +149,18 @@ class LoopAnalysis:
             matches = re.findall(pattern, loop_content)
             array_names.extend(matches)
         
-        # 2. 匹配数组使用Mode：arr[i], arr[0], arr[n]（排除已经被 p->a Mode匹配的）
-        # 先收集所有 p->a Mode的数组名
-        ptr_array_pattern = r'(\w+\s*->\s*\w+)\s*\[[^\]]*\]'  # p->a[i] 提取 p->a
+        # 2. Match array usage patterns: arr[i], arr[0], arr[n] (exclude those already matched by p->a patterns)
+        # First collect all p->a pattern array names
+        ptr_array_pattern = r'(\w+\s*->\s*\w+)\s*\[[^\]]*\]'  # p->a[i] extract p->a
         ptr_arrays = re.findall(ptr_array_pattern, loop_content)
         array_names.extend(ptr_arrays)
         
-        # 收集所有结构体数组成员
-        struct_array_pattern = r'(\w+\.\w+)\s*\[[^\]]*\]'  # struct.arr[i] 提取 struct.arr
+        # Collect all struct array members
+        struct_array_pattern = r'(\w+\.\w+)\s*\[[^\]]*\]'  # struct.arr[i] extract struct.arr
         struct_arrays = re.findall(struct_array_pattern, loop_content)
         array_names.extend(struct_arrays)
         
-        # 3. 匹配函数参数中的数组声明
+        # 3. Match array declarations in function parameters
         param_array_patterns = [
             r'\b(?:int|char|float|double|long|short|unsigned|signed)\s+(\w+)\s*\[\s*\]',  # int arr[]
             r'\b(?:int|char|float|double|long|short|unsigned|signed)\s*\*\s*(\w+)\b',     # int* arr
@@ -171,13 +171,13 @@ class LoopAnalysis:
             matches = re.findall(pattern, loop_content)
             array_names.extend(matches)
         
-        # 4. 匹配简单的数组使用Mode，但排除已经被 p->a 或 struct.arr Mode匹配的
+        # 4. Match simple array usage patterns, but exclude those already matched by p->a or struct.arr patterns
         simple_array_pattern = r'\b(\w+)\s*\[[^\]]*\]'
         simple_arrays = re.findall(simple_array_pattern, loop_content)
         
-        # 过滤掉已经被复合Mode匹配的数组名
+        # Filter out array names already matched by composite patterns
         for simple_array in simple_arrays:
-            # 检查这个简单数组名是否已经包含在复合Mode中
+            # Check if this simple array name is already contained in composite patterns
             is_contained = False
             for ptr_array in ptr_arrays:
                 if simple_array in ptr_array:
@@ -188,38 +188,36 @@ class LoopAnalysis:
                     is_contained = True
                     break
             
-            # 如果没有被包含，则添加
+            # If not contained, add it
             if not is_contained:
                 array_names.append(simple_array)
         
         return array_names
     
     def _extract_from_function_signature(self):
-        """从函数签名中提取数组参数"""
+        """Extract array parameters from function signature"""
         array_names = []
         
-        # 获取函数内容
+        # Get function content
         loop = self.get_json_at_index()
         if not loop:
             return array_names
         
-        # 查找函数定义
+        # Find function definitions
         function_patterns = [
             r'void\s+(\w+)\s*\([^)]*\)',  # void func(...)
             r'int\s+(\w+)\s*\([^)]*\)',   # int func(...)
             r'(\w+)\s+(\w+)\s*\([^)]*\)'  # type func(...)
         ]
         
-        # 这里可以扩展来解析函数参数中的数组声明
-        # 暂时返回空列表，可以根据需要扩展
         
         return array_names
 
 
     def extract_unchanged_arrays(self):
         """
-        提取没有被写入只读取的数组名
-        返回一个列表，包含所有只读的数组名
+        Extract array names that are not written to but only read
+        Returns a list containing all read-only array names
         """
         if not self.array_names:
             return []
@@ -234,7 +232,7 @@ class LoopAnalysis:
             
             escaped_array = re.escape(array_name)
             
-            # 构建写入Mode的正则表达式
+            # Build write pattern regular expressions
             write_patterns = [
                 rf"\b{escaped_array}\s*\[\s*\w+\s*\]\s*=",  # array[index] =
                 rf"\b{escaped_array}\s*\[\s*\w+\s*\]\s*\+=",  # array[index] +=
@@ -247,14 +245,14 @@ class LoopAnalysis:
                 rf"--\s*{escaped_array}\s*\[\s*\w+\s*\]",  # --array[index]
             ]
             
-            # 检查是否有任何写入Mode匹配
+            # Check if any write pattern matches
             is_written = False
             for pattern in write_patterns:
                 if re.search(pattern, loop_content):
                     is_written = True
                     break
             
-            # 如果没有Found写入Mode，说明数组是只读的
+            # If no write pattern found, the array is read-only
             if not is_written:
                 unchanged_arrays.append(array_name)
         
@@ -273,19 +271,19 @@ class LoopAnalysis:
 
         def split_path_and_state(expression):
             """
-            按最后一个 && 分割字符串，得到 path 和 state
-            :param expression: Input的表达式字符串
-            :return: 返回 path 和 state 两部分
+            Split string by the last && to get path and state
+            :param expression: Input expression string
+            :return: Return path and state parts
             """
-            # 查找最后一个 && 的位置
+            # Find position of last &&
             last_and_index = expression.rfind("&&")
 
             if last_and_index == -1:
-                # 如果没有Found &&，path 为空，整个表达式作为 state
+                # If no && found, path is empty, entire expression as state
                 path = None
                 state = expression.strip()
             else:
-                # 按最后一个 && 分割
+                # Split by last &&
                 path = expression[:last_and_index].strip()
                 path_parts = path.split('&&')
                 valid_parts = []
@@ -304,7 +302,7 @@ class LoopAnalysis:
 
             return path, state
 
-        # 正则表达式匹配形如 "var == value" 的部分，支持嵌套括号
+        # Regular expression matching patterns like "var == value", supporting nested parentheses
 
 
         def parse_expressions(s):
@@ -318,29 +316,29 @@ class LoopAnalysis:
             while i < n:
                 char = remaining[i]
                 
-                # 处理括号层级
+                # Handle parenthesis nesting
                 if char == '(':
                     stack.append(i)
                 elif char == ')':
                     if stack:
                         stack.pop()
                 
-                # 遇到逻辑运算符且不在括号内时，分割表达式
+                # When encountering logical operators and not inside parentheses, split expression
                 if i < n-1 and remaining[i:i+2] in ('&&', '* ') and not stack:
-                    # 提取当前表达式
+                    # Extract current expression
                     expr = remaining[expr_start:i].strip()
-                    # 解析表达式中的键值对
+                    # Parse key-value pairs in expression
                     eq_pos = expr.find('==')
                     if eq_pos != -1:
                         var = expr[:eq_pos].strip(' ()')
                         value = expr[eq_pos+2:].strip(' ()')
                         var_map[var] = value
                     expr_start = i + 2
-                    i += 1  # Skip运算符的第二个字符
+                    i += 1  # Skip second character of operator
                 
                 i += 1
             
-            # 处理最后一个表达式
+            # Process last expression
             expr = remaining[expr_start:].strip()
             eq_pos = expr.find('==')
             if eq_pos != -1:
@@ -353,12 +351,12 @@ class LoopAnalysis:
         for sub_condition in sub_conditions:
 
             path,state = split_path_and_state(sub_condition)
-            var_map = {}  # 为每个子条件创建一个新的 var_map
+            var_map = {}  # Create a new var_map for each sub-condition
             path_cond = path
             path_conds.append(path_cond)
            
             var_map = parse_expressions(state)
-            var_maps.append(var_map)  # 将 var_map 添加到列表中
+            var_maps.append(var_map)  # Add var_map to list
 
 
         variables_to_exclude = set()
@@ -387,14 +385,14 @@ class LoopAnalysis:
         for replacement in variables_to_replace:
             for path_cond in new_path_conds:
                 if path_cond:
-                    # 只替换变量名末尾的 _l，不替换中间的 _l
+                    # Only replace _l at the end of variable names, not in the middle
                     import re
                     pattern = r'\b' + re.escape(replacement) + r'\b'
                     path_cond = re.sub(pattern, replacement[:-2], path_cond)
             
             for var_map in var_maps:
                 for key in var_map.keys():
-                    # 只替换变量名末尾的 _l，不替换中间的 _l
+                    # Only replace _l at the end of variable names, not in the middle
                     import re
                     pattern = r'\b' + re.escape(replacement) + r'\b'
                     var_map[key] = re.sub(pattern, replacement[:-2], var_map[key])
@@ -409,7 +407,7 @@ class LoopAnalysis:
         loop = self.get_json_at_index()
         code = loop.get("content", "")
         
-        # 查找第一个出现的 for 或 while 关键字
+        # Find first occurrence of for or while keyword
         loop_keywords = ["for", "while"]
         first_pos = len(code)
         keyword_found = None
@@ -419,22 +417,22 @@ class LoopAnalysis:
                 first_pos = pos
                 keyword_found = keyword
         if keyword_found is None:
-            return None  # 未Found循环关键字
+            return None  # Loop keyword not found
         
-        # 确保Found的是完整的关键字
+        # Ensure found is complete keyword
         if (first_pos > 0 and (code[first_pos-1].isalnum() or code[first_pos-1]=='_')) or \
         (first_pos + len(keyword_found) < len(code) and (code[first_pos+len(keyword_found)].isalnum() or code[first_pos+len(keyword_found)]=='_')):
             return None
         
-        # 定位 '('（Skip关键字和空格）
+        # Locate '(' (skip keyword and spaces)
         cursor = first_pos + len(keyword_found)
         while cursor < len(code) and code[cursor].isspace():
             cursor += 1
         if cursor >= len(code) or code[cursor] != '(':
-            return None  # 没有Found左括号
+            return None  # Left parenthesis not found
         cursor += 1  # Skip '('
         
-        # 提取括号内的内容，支持括号嵌套
+        # Extract content inside parentheses, supporting nested parentheses
         condition_start = cursor
         paren_depth = 1
         while cursor < len(code) and paren_depth > 0:
@@ -444,19 +442,19 @@ class LoopAnalysis:
                 paren_depth -= 1
             cursor += 1
         if paren_depth != 0:
-            return None  # 括号不匹配
+            return None  # Parentheses don't match
         inner = code[condition_start: cursor-1].strip()
         
-        # 提取条件
+        # Extract condition
         condition = None
         if keyword_found == "while":
-            # while 循环条件为整个括号内内容
+            # while loop condition is entire content inside parentheses
             condition = inner
         elif keyword_found == "for":
-            # for 循环通常包含三个表达式：初始化; 条件; 迭代，条件在中间
+            # for loop usually contains three expressions: initialization; condition; iteration, condition is in the middle
             parts = []
             part = ""
-            nested = 0  # 处理内部括号嵌套
+            nested = 0  # Handle internal parenthesis nesting
             for ch in inner:
                 if ch == '(':
                     nested += 1
@@ -468,7 +466,7 @@ class LoopAnalysis:
                 else:
                     part += ch
             parts.append(part.strip())
-            # 条件部分位于第二个分号分隔部分（若存在）
+            # Condition part is in the second semicolon-separated part (if exists)
             if len(parts) >= 2:
                 condition = parts[1]
             else:
@@ -489,27 +487,27 @@ class LoopAnalysis:
             return [None]
 
         for var_map in var_maps:
-            # 将字符串转换为列表，方便修改
+            # Convert string to list for easy modification
             loop_cond_list = list(loop_cond)
-            i = 0  # 当前查找位置
+            i = 0  # Current search position
 
             while i < len(loop_cond_list):
-                # 从左到右查找变量名
+                # Search for variable names from left to right
                 for var in var_map:
-                    # 检查当前位置是否匹配变量名
+                    # Check if current position matches variable name
                     if loop_cond_list[i:i + len(var)] == list(var):
-                        # 检查变量名是否完整（前后是单词边界或非字母数字字符）
+                        # Check if variable name is complete (word boundaries or non-alphanumeric characters before and after)
                         is_start_boundary = (i == 0 or not loop_cond_list[i - 1].isalnum())
                         is_end_boundary = (i + len(var) >= len(loop_cond_list) or not loop_cond_list[i + len(var)].isalnum())
                         if is_start_boundary and is_end_boundary:
-                            # 替换变量名
+                            # Replace variable name
                             loop_cond_list[i:i + len(var)] = list(var_map[var])
-                            # Skip替换后的部分
+                            # Skip replaced part
                             i += len(var_map[var]) - 1
                             break
                 i += 1
 
-            # 将列表转换回字符串并添加到Result中
+            # Convert list back to string and add to result
             updated_loop_conditions.append(''.join(loop_cond_list))
 
         return updated_loop_conditions
@@ -521,7 +519,7 @@ class LoopAnalysis:
 
         
 
-        # 提取变量映射
+        # Extract variable mapping
         var_maps,path_conds = self.extract_var_map_from_file()
         self.var_maps =var_maps
         self.path_conds = path_conds
@@ -529,22 +527,22 @@ class LoopAnalysis:
         self.logger.info(f"Path conditions: {path_conds}")
     
 
-        # 提取前置条件
+        # Extract precondition
         pre_condition = self.extract_precond_from_file()
         self.pre_condition =pre_condition
         self.logger.info(f"Pre condition: {pre_condition}")
 
-        # 提取循环条件
+        # Extract loop condition
         loop_condition = self.extract_first_loop_condition()
         self.loop_condition = loop_condition
         self.logger.info(f"Loop Condition: {loop_condition}")
 
-        # 提取 array 变量名
+        # Extract array variable names
         array_names = self.extract_array_names()
         self.array_names = array_names
         self.logger.info(f"Array Names: {array_names}")
 
-        # 替换循环条件中的变量为值
+        # Replace variables in loop condition with values
         if var_maps :
             updated_loop_conditions = self.replace_vars_with_values(loop_condition, var_maps)
             self.updated_loop_conditions = updated_loop_conditions
@@ -558,7 +556,7 @@ class LoopAnalysis:
         self.non_inductive_vars = non_inductive_vars
         self.logger.info(f"Non Inductive Variables: {non_inductive_vars}")
 
-        # 提取只读数组
+        # Extract read-only arrays
         unchanged_arrays = self.extract_unchanged_arrays()
         self.unchanged_arrays = unchanged_arrays
         self.logger.info(f"Unchanged Arrays (Read-only): {unchanged_arrays}")
@@ -572,7 +570,7 @@ class LoopAnalysis:
 
 
 
-# 示例调用 
+# Example usage 
 if __name__ == "__main__":
    
    json_file = 'loop/09.json'

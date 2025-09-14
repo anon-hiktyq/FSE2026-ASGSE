@@ -19,36 +19,36 @@ class OutputVerifier:
 
     def print_errors(self, error_list):
         for error in error_list:
-            print(error[0].splitlines()[0])  # 打印Error描述
-            print(error[1])  # 打印Error文件位置
-            print(error[2])  # 打印Error行内容
+            print(error[0].splitlines()[0])  # Print error description
+            print(error[1])  # Print error file location
+            print(error[2])  # Print error line content
             print()
     
 
     def extract_semantic_error(self,error_message):
-        # 使用正则表达式提取Filename和行号
+        # Use regular expression to extract filename and line number
         pattern = r'file\s+([\w\/\.\-]+),\s+line\s+(\d+)'
         match = re.search(pattern, error_message)
         
         if match:
             file_path = match.group(1)
-            line_number = int(match.group(2))  # 转换为整数
+            line_number = int(match.group(2))  # Convert to integer
 
             try:
                 with open(file_path, 'r') as file:
-                    # 读取文件的所有行
+                    # Read all lines of the file
                     lines = file.readlines()
-                    # 检查行号是否在文件范围内
+                    # Check if line number is within file range
                     if 1 <= line_number <= len(lines):
-                        error_line = lines[line_number - 1].strip()  # 提取Error行内容
+                        error_line = lines[line_number - 1].strip()  # Extract error line content
                     else:
-                        error_line = None  # 行号超出范围
+                        error_line = None  # Line number out of range
                     
             except FileNotFoundError:
                 print(f"Error: File '{file_path}' not found.")
                 return None, None
 
-            # 构造Error位置信息和Error行内容信息
+            # Construct error location information and error line content information
             error_location_msg = f"Error found in file: {file_path} at line: {line_number}"
             error_content_msg = f"Error line content: {error_line}" if error_line else "Error line content: Line number out of range or file could not be read."
 
@@ -60,7 +60,7 @@ class OutputVerifier:
 
     def check_valid_pairs(self, filter_invs):
         results = []
-        # 按相邻相同的元素分组
+        # Group by adjacent identical elements
         for i in range(0, len(filter_invs), 2):
             if "Valid" in str(filter_invs[i]) and "Valid" in str(filter_invs[i+1]):
                 results.append(True)

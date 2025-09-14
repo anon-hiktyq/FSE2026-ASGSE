@@ -41,24 +41,24 @@ class InvGenerator:
     
     
     def update_loop_content(self,code,new_loop_content,ridx):
-        # 将代码拆分成单字符的列表
+        # Split code into single character list
         code_list = list(code)
         
-        # 查找所有的 for 或 while 循环位置
+        # Find all for or while loop positions
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         matches = list(re.finditer(loop_pattern, code))
         
         loop_start = 0
         end_index = -1
         
-        # 处理每一个循环
+        # Process each loop
         for idx, match in enumerate(matches):
 
-            # 循环的起始位置
+            # Loop start position
             if idx == ridx:
                 loop_start = match.start()  
 
-                # 在循环后Found第一个 { 对应的 }
+                # Find the first } corresponding to { after the loop
                 brace_count = 0
                 loop_end = match.end()
                 end_index = loop_end
@@ -70,43 +70,43 @@ class InvGenerator:
                     end_index += 1
 
             
-        # 替换循环内容
+        # Replace loop content
         updated_code = (
-            ''.join(code_list[:loop_start]) +  # 循环之前的部分
-            new_loop_content +                   # 替换后的循环内容
-            ''.join(code_list[end_index:])   # 循环之后的部分
+            ''.join(code_list[:loop_start]) +  # Part before loop
+            new_loop_content +                   # Replaced loop content
+            ''.join(code_list[end_index:])   # Part after loop
         )
             
-        # 将字符列表重新拼接成字符串
+        # Rejoin character list into string
         return updated_code
     
     def get_annotated_loop_content(self,code,ridx):
         code_list = list(code)
         
-        # 查找所有的 for 或 while 循环位置
+        # Find all for or while loop positions
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         matches = list(re.finditer(loop_pattern, code))
 
         at_index = 0
         end_index = -1
        
-        # 处理每一个循环
+        # Process each loop
         for idx, match in enumerate(matches):
            
-            # 循环的起始位置
+            # Loop start position
             if idx == ridx:
 
                 loop_start = match.start()  
                  
-                at_index = -1  # 默认值，如果没有Found '@' 就返回 -1
-                for i in range(loop_start - 1, -1, -1):  # 从 loop_start - 1 开始，反向遍历
+                at_index = -1  # Default value, return -1 if '@' not found
+                for i in range(loop_start - 1, -1, -1):  # Start from loop_start - 1, traverse backwards
                     if code_list[i] == '@':
                         at_index = i
-                        break  # Found第一个 '@'，跳出循环
+                        break  # Found first '@', break loop
 
                 at_index = at_index -2
 
-                # 在循环后Found第一个 { 对应的 }
+                # Find the first } corresponding to { after the loop
                 brace_count = 0
                 loop_end = match.end()
                 end_index = loop_end
@@ -118,21 +118,21 @@ class InvGenerator:
                     end_index += 1
                 
 
-        # 替换循环内容
+        # Replace loop content
         annotated_loop_content = ''.join(code_list[at_index:end_index]) 
             
-        # 将字符列表重新拼接成字符串
+        # Rejoin character list into string
         return annotated_loop_content
     
     def extract_var_map_from_state(self,text):
         
         var_map = {}
-        # 正则表达式匹配形如 "var == value" 的部分，支持嵌套括号
+        # Regular expression matching patterns like "var == value", supporting nested parentheses
         pattern = r'(\w+)\s*==\s*(\((?:[^()]*|\((?:[^()]*|\([^()]*\))*\))*\)|[^()]+)'
         matches = re.findall(pattern, text)
 
         for var, value in matches:
-            # 去掉 value 中的外层括号（如果存在）
+            # Remove outer parentheses from value (if exists)
             value = value.strip()
             if value.startswith('(') and value.endswith(')'):
                 value = value[1:-1]
@@ -148,14 +148,14 @@ class InvGenerator:
 
             if updated_loop_condition == None:
                 return True
-            # 检查字符串中是否含有字母
+            # Check if string contains letters
             if  'unknown' in updated_loop_condition:
                 return True
 
             if re.search(r'[a-zA-Z]', updated_loop_condition):
-                return False  # 含有字母
+                return False  # Contains letters
             else:
-                return True  # 不含字母
+                return True  # No letters
             
         updated_code = []
         if contains_no_letters(updated_loop_condition) :
@@ -287,11 +287,11 @@ class InvGenerator:
             if 'unknown' in updated_loop_condition :
                 return True
             
-            # 检查字符串中是否含有字母
+            # Check if string contains letters
             if re.search(r'[a-zA-Z]', updated_loop_condition):
-                return False  # 含有字母
+                return False  # Contains letters
             else:
-                return True  # 不含字母
+                return True  # No letters
             
         if not contains_no_letters(updated_loop_condition):
 
@@ -365,14 +365,14 @@ class InvGenerator:
 
             if updated_loop_condition == None:
                 return True
-            # 检查字符串中是否含有字母
+            # Check if string contains letters
             if  'unknown' in updated_loop_condition:
                 return True
 
             if re.search(r'[a-zA-Z]', updated_loop_condition):
-                return False  # 含有字母
+                return False  # Contains letters
             else:
-                return True  # 不含字母
+                return True  # No letters
             
 
 
@@ -412,14 +412,14 @@ class InvGenerator:
 
             if updated_loop_condition == None:
                 return True
-            # 检查字符串中是否含有字母
+            # Check if string contains letters
             if  'unknown' in updated_loop_condition:
                 return True
 
             if re.search(r'[a-zA-Z]', updated_loop_condition):
-                return False  # 含有字母
+                return False  # Contains letters
             else:
-                return True  # 不含字母
+                return True  # No letters
             
 
 
@@ -455,16 +455,16 @@ class InvGenerator:
 
     def get_json_at_index(self,json_file, idx):
         with open(json_file, 'r') as file:
-            data = json.load(file)  # 读取并解析 JSON 文件
+            data = json.load(file)  # Read and parse JSON file
             
             if isinstance(data, list) and 0 <= idx < len(data):
-                return data[idx]  # 返回第 idx 个 JSON 对象
+                return data[idx]  # Return the idx-th JSON object
             else:
                 raise IndexError("Index out of range or data is not a list")
             
     
     def get_c_code(self, c_file_path):
-        """从 C 文件中读取内容并生成用户提示"""
+        """Read content from C file and generate user prompt"""
         try:
             with open(c_file_path, 'r') as file:
                 c_code = file.read()
@@ -475,7 +475,7 @@ class InvGenerator:
         return c_code
 
     def parse_args(self):
-        """设置命令行参数解析器"""
+        """Set up command line argument parser"""
         parser = argparse.ArgumentParser(description="Run Frama-C WP on a C file.")
         parser.add_argument('file_name', help="Path to the C file to analyze")
         return parser.parse_args()
@@ -487,7 +487,7 @@ class InvGenerator:
             self.logger.info("after repair")
             self.logger.info(annotations)
 
-        # 将 ACSL 注释写入Output文件
+        # Write ACSL annotations to output file
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
             file.write(annotations)
 
@@ -507,7 +507,7 @@ class InvGenerator:
             self.logger.info(annotations)
 
 
-        # 将 ACSL 注释写入Output文件
+        # Write ACSL annotations to output file
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
             file.write(annotations)
 
@@ -524,7 +524,7 @@ class InvGenerator:
             self.logger.info(annotations)
         
 
-        # 将 ACSL 注释写入Output文件
+        # Write ACSL annotations to output file
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
             file.write(annotations)
         
@@ -545,7 +545,7 @@ class InvGenerator:
             self.logger.info(annotations)
 
     
-        # 将 ACSL 注释写入Output文件
+        # Write ACSL annotations to output file
         with open(output_c_file_path, 'w', encoding='utf-8') as file:
             file.write(annotations)
 
@@ -557,7 +557,7 @@ class InvGenerator:
         while valid != True and ht <= 5:
                 
             verifier = OutputVerifier(self.config,self.logger)
-            verifier.run(file_name)   # 传入完整路径
+            verifier.run(file_name)   # Pass complete path
 
             validate_result = verifier.validate_result
 
@@ -578,7 +578,7 @@ class InvGenerator:
                 self.logger.info(annotations)
 
 
-            # 将 ACSL 注释写入Output文件
+            # Write ACSL annotations to output file
             with open(output_c_file_path, 'w', encoding='utf-8') as file:
                     file.write(annotations)
 
@@ -586,11 +586,11 @@ class InvGenerator:
         return annotations
     
     def get_user_prompt_traival(self, loop_content,pre_condition):
-        # 从文件中读取 prompt 模板
+        # Read prompt template from file
         with open("prompt/loop/inv_gen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         user_prompt = prompt_template.format(content=loop_content,pre_cond = pre_condition,examples='',strength_guide='',predicate_guide='',verification_guide='')
 
         self.logger.debug("user_prompt_traival")
@@ -599,13 +599,13 @@ class InvGenerator:
         return user_prompt
     
     def get_user_prompt_template(self, loop_content,pre_condition):
-        # 从文件中读取 prompt 模板
+        # Read prompt template from file
         with open("prompt/loop/inv_gen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
         strength_guide = '- Generate loop invariants with equality constraints as comprehensively as possible.'
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         user_prompt = prompt_template.format(content=loop_content,pre_cond = pre_condition,examples='',strength_guide=strength_guide,predicate_guide='',verification_guide='')
 
         self.logger.debug("user_prompt_template")
@@ -615,7 +615,7 @@ class InvGenerator:
         return user_prompt
     
     def get_user_prompt_verification(self, loop_content,pre_condition):
-        # 从文件中读取 prompt 模板
+        # Read prompt template from file
         with open("prompt/loop/inv_gen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
@@ -631,7 +631,7 @@ class InvGenerator:
         return user_prompt
     
     def get_user_prompt_db(self, loop_content,pre_condition,examples):
-        # 从文件中读取 prompt 模板
+        # Read prompt template from file
         with open("prompt/loop/inv_gen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
         
@@ -683,78 +683,78 @@ class InvGenerator:
 
     def get_user_prompt(self, loop_content,pre_condition):
 
-        # 从文件中读取 prompt 模板
+        # Read prompt template from file
         with open("prompt/loop/gen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         user_prompt = prompt_template.format(content=loop_content,pre_cond = pre_condition)
 
         return user_prompt
     
 
     def get_simgen_prompt(self, loop_content):
-         # 从文件中读取 prompt 模板
+         # Read prompt template from file
         with open("prompt/loop/simgen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         simgen_prompt = prompt_template.format(content=loop_content)
         return simgen_prompt
     
 
     def get_error_prompt(self,error_message, c_code):
-         # 从文件中读取 prompt 模板
+         # Read prompt template from file
         with open("prompt/error.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         error_prompt = prompt_template.format(error_str = error_message , c_code= c_code)
         return error_prompt
     
     def get_adjust_prompt(self,error_message, c_code):
-         # 从文件中读取 prompt 模板
+         # Read prompt template from file
         with open("prompt/loop/adjust.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         adjust_prompt = prompt_template.format(error_str = error_message , c_code= c_code)
         return adjust_prompt
     
     def get_regen_prompt(self,error_message, c_code):
-         # 从文件中读取 prompt 模板
+         # Read prompt template from file
         with open("prompt/loop/regen.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         regen_prompt = prompt_template.format(error_str = error_message , c_code= c_code)
         return regen_prompt
     
     def get_strength_prompt(self,error_message, c_code):
-         # 从文件中读取 prompt 模板
+         # Read prompt template from file
         with open("prompt/loop/strength.txt", "r", encoding="utf-8") as file:
             prompt_template = file.read()
 
-        # 替换模板中的 {code} 占位符
+        # Replace {code} placeholder in template
         strength_prompt = prompt_template.format(error_str = error_message , c_code= c_code)
         return strength_prompt
     
     def repair_annotations(self, error_message, c_code):
-        """调用Model生成ACSL规约"""
+        """Call Model to generate ACSL specification"""
 
         prompt = self.get_error_prompt(error_message, c_code)
 
         try:
-            """调用 OpenAI API 获取 ACSL 注释"""
+            """Call OpenAI API to get ACSL annotations"""
             
 
             def extract_last_c_code(text):
-                # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
+                # Match C code blocks (Markdown code blocks or code starting with #include)
+                code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown code blocks
 
-                return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
+                return code_blocks[-1] if code_blocks else text  # Return last C code block
 
-            # 处理响应
+            # Process response
             assistant_response = self.llm.chat(prompt)
             assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
             assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
@@ -763,12 +763,12 @@ class InvGenerator:
             return assistant_response
 
         except Exception as e:
-            self.logger.error(f"API调用失败: {e}")
+            self.logger.error(f"API call failed: {e}")
             return None
     
         
     def adjust_annotations(self, error_list, c_code,pre_cond):
-            """调用Model生成ACSL规约"""
+            """Call Model to generate ACSL specification"""
 
             def format_errors(error_list):
                 if not error_list:
@@ -796,16 +796,16 @@ class InvGenerator:
             prompt = self.get_adjust_prompt(error_str, c_code)
 
             try:
-                """调用 OpenAI API 获取 ACSL 注释"""
+                """Call OpenAI API to get ACSL annotations"""
                
 
                 def extract_last_c_code(text):
-                    # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
+                    # Match C code blocks (Markdown code blocks or code starting with #include)
+                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown code blocks
 
-                    return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
+                    return code_blocks[-1] if code_blocks else text  # Return last C code block
 
-                # 处理响应
+                # Process response
                 assistant_response = self.llm.chat(prompt)
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
                 assistant_response = re.sub(r'<think>.*?</think>', '', assistant_response, flags=re.DOTALL)
@@ -814,11 +814,11 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                self.logger.error(f"API调用失败: {e}")
+                self.logger.error(f"API call failed: {e}")
                 return None
             
     def strength_annotations(self, error_list, c_code):
-            """调用Model生成ACSL规约"""
+            """Call Model to generate ACSL specification"""
 
             def format_errors(error_list):
                 if not error_list:
@@ -842,16 +842,16 @@ class InvGenerator:
             prompt = self.get_strength_prompt(error_str, c_code)
 
             try:
-                """调用 OpenAI API 获取 ACSL 注释"""
+                """Call OpenAI API to get ACSL annotations"""
                 
 
                 def extract_last_c_code(text):
-                    # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
+                    # Match C code blocks (Markdown code blocks or code starting with #include)
+                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown code blocks
 
-                    return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
+                    return code_blocks[-1] if code_blocks else text  # Return last C code block
 
-                # 处理响应
+                # Process response
                 assistant_response = self.llm.chat(prompt)
             
                 assistant_response = re.sub(r'>\s*Reasoning\s*[\s\S]*?(?=\n\n|$)', '', assistant_response, flags=re.IGNORECASE)
@@ -861,12 +861,12 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                self.logger.error(f"API调用失败: {e}")
+                self.logger.error(f"API call failed: {e}")
                 return None
     
 
     def regen_annotations(self, error_list, c_code,pre_cond):
-            """调用Model生成ACSL规约"""
+            """Call Model to generate ACSL specification"""
 
             def format_errors(error_list):
                 if not error_list:
@@ -895,16 +895,16 @@ class InvGenerator:
             prompt = self.get_regen_prompt(error_str, c_code)
 
             try:
-                """调用 OpenAI API 获取 ACSL 注释"""
+                """Call OpenAI API to get ACSL annotations"""
                 
 
                 def extract_last_c_code(text):
-                    # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
+                    # Match C code blocks (Markdown code blocks or code starting with #include)
+                    code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown code blocks
 
-                    return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
+                    return code_blocks[-1] if code_blocks else text  # Return last C code block
 
-                # 处理响应
+                # Process response
                 assistant_response = self.llm.chat(prompt)
 
                 if self.config.debug:
@@ -917,48 +917,48 @@ class InvGenerator:
                 return assistant_response
 
             except Exception as e:
-                self.logger.error(f"API调用失败: {e}")
+                self.logger.error(f"API call failed: {e}")
                 return None
 
 
     def hudini_annotations(self, validate_result, annotations):
-        # 构建匹配Mode
+        # Build matching pattern
         pattern = re.compile(
             r'^(\s*)loop\s+invariant\b[\s\S]*?;(.*?)(\n|$)', 
             flags=re.MULTILINE
         )
 
-        # 使用索引跟踪当前匹配项
-        current_index = [0]  # 使用list实现闭包内的数值修改
+        # Use index to track current match
+        current_index = [0]  # Use list to enable value modification in closure
 
-        # 替换处理器
+        # Replacement handler
         def replacer(match):
-            # 获取当前匹配项的判定Result
+            # Get current match result
             if current_index[0] < len(validate_result):
                 should_keep = validate_result[current_index[0]]
                 current_index[0] += 1
             else:
-                # 如果数组长度不足，默认Kept
+                # If array length is insufficient, keep by default
                 should_keep = True
 
-            # 返回空字符串Deletedfalse项，Kepttrue项
+            # Return empty string to delete false items, keep true items
             return '' if not should_keep else match.group(0)
 
-        # 执行全局替换
+        # Execute global replacement
         return pattern.sub(replacer, annotations)
 
 
     def get_annotations(self, prompt):
-        """调用 OpenAI API 获取 ACSL 注释"""
+        """Call OpenAI API to get ACSL annotations"""
        
 
         def extract_last_c_code(text):
-                # 匹配 C 代码块（Markdown 代码块 或 以 #include 开头的代码）
-                code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown 代码块
+                # Match C code blocks (Markdown code blocks or code starting with #include)
+                code_blocks = re.findall(r'```c(.*?)```', text, re.DOTALL)  # Markdown code blocks
 
-                return code_blocks[-1] if code_blocks else text  # 返回最后一个 C 代码块
+                return code_blocks[-1] if code_blocks else text  # Return last C code block
 
-            # 处理响应
+            # Process response
         assistant_response = self.llm.chat(prompt)
         if self.config.debug:
                     self.logger.debug("invgen reasoning")
@@ -972,29 +972,29 @@ class InvGenerator:
     
     
     def mark_failed_invariants(self,code, validation_results):
-        # 匹配所有循环不变量语句
+        # Match all loop invariant statements
         invariant_pattern = re.compile(r'loop invariant (.*?);\n', re.DOTALL)
         
-        # Found所有不变量及其位置
+        # Find all invariants and their positions
         matches = list(invariant_pattern.finditer(code))
         
-        # 创建可修改的代码列表
+        # Create modifiable code list
         code_list = list(code)
         offset = 0
         
-        # 遍历验证Result并标注失败项
+        # Traverse validation results and mark failed items
         for idx, valid in enumerate(validation_results):
             if not valid and idx < len(matches):
                 match = matches[idx]
                 
-                # 计算实际位置（考虑之前修改的偏移量）
+                # Calculate actual position (considering previous modification offset)
                 start = match.start(1) + offset
                 end = match.end(1) + offset
                 
-                # 添加标记
+                # Add marker
                 marked = f"{match.group(1)} [INVARIANT FAILED] "
                 
-                # 替换内容并更新偏移量
+                # Replace content and update offset
                 code_list[start:end] = list(marked)
                 offset += len(marked) - (end - start)
         
@@ -1004,7 +1004,7 @@ class InvGenerator:
     
     def create_list_prompt(self,content:str,examples:str) -> str:
     
-        # 从文件中读取prompt模板
+        # Read prompt template from file
         try:
             with open('prompt/list/spec_gen.txt', 'r', encoding='utf-8') as f:
                 prompt_template = f.read()
@@ -1016,64 +1016,6 @@ class InvGenerator:
         prompt = prompt_template.format(content=content,examples=examples)
         return prompt
     
-
-    # def extract_and_parse_json(self,response_string: str) -> dict:
-    #     """
-    #     Extracts and parses JSON content from a response string.
-        
-    #     Args:
-    #         response_string (str): The response string containing JSON content.
-            
-    #     Returns:
-    #         A Python dictionary containing the parsed JSON data, or an empty dictionary
-    #         if no valid JSON is found.
-    #     """
-    #     # Use a regular expression to find content within a `json` block
-    #     match = re.search(r"```json\n(.*?)\n```", response_string, re.DOTALL)
-        
-    #     if match:
-    #         json_string = match.group(1)
-    #         try:
-    #             data = json.loads(json_string)
-    #             return data
-    #         except json.JSONDecodeError as e:
-    #             print(f"JSON parse failed: {e}")
-                    
-    #                 # 只修复明显的非标准转义，Kept标准转义
-    #                 # 例如：\at -> \\at，但Kept \\n, \\t 等
-    #             fixed_json = re.sub(r'\\(?![\\/"bfnrtu])', r'\\\\', json_string)
-                    
-    #             try:
-    #                 data = json.loads(fixed_json)
-    #                 return data
-    #             except json.JSONDecodeError:
-    #                 print("JSON fix failed, returning empty dict")
-    #                 return {}
-    #     else:
-    #         print("No JSON code block found.")
-    #         return {}
-
-    # def extract_invariant(self,response_string: str) -> dict:
-    #     """
-    #     Extracts invariant content from response string.
-    #     """
-    #     # 查找各个字段的代码块
-    #     name_match = re.search(r"```name\n(.*?)\n```", response_string, re.DOTALL)
-    #     definition_match = re.search(r"```definition\n(.*?)\n```", response_string, re.DOTALL)
-    #     invariant_match = re.search(r"```invariant\n(.*?)\n```", response_string, re.DOTALL)
-
-    #     extracted_data = {}
-
-    #     if name_match:
-    #         extracted_data["name"] = name_match.group(1).strip()
-    #     if definition_match:
-    #         extracted_data["definition"] = definition_match.group(1).strip()
-    #     if invariant_match:
-    #         # 直接提取文本内容，不尝试解析为 JSON
-    #         invariant_text = invariant_match.group(1).strip()
-    #         extracted_data["invariant"] = invariant_text
-
-    #     return extracted_data if extracted_data else {}
         
     def get_examples(self,loop_code):
 
@@ -1101,7 +1043,7 @@ You must use these follow examples as a reference to complete the task, with the
 
 
     def run(self):
-        """主逻辑"""
+        """Main logic"""
 
         self.llm = Chatbot(self.llm_config)
 
@@ -1290,7 +1232,7 @@ You must use these follow examples as a reference to complete the task, with the
                     annotations_list[0] = self.get_annotations(user_prompt)
 
             else:
-            # 获取用户提示
+            # Get user prompt
                 
                 if self.config.use_db:
 
@@ -1369,7 +1311,7 @@ You must use these follow examples as a reference to complete the task, with the
                     self.logger.info(annotations)
 
         
-                # 将 ACSL 注释写入Output文件
+                # Write ACSL annotations to output file
                 with open(output_c_file_path, 'w', encoding='utf-8') as file:
                     file.write(annotations)
 
@@ -1378,14 +1320,14 @@ You must use these follow examples as a reference to complete the task, with the
                     for _ in range(self.config.refine_count):
 
                         verifier = OutputVerifier(self.config,self.logger,True)
-                        verifier.run(file_name)   # 传入完整路径
+                        verifier.run(file_name)   # Pass complete path
                         
-                        # 获取验证Result（假设返回的是列表）
+                        # Get verification result (assuming it returns a list)
                         validate_result = verifier.validate_result
                         verify_result = verifier.verify_result
                         syntax_error = verifier.syntax_error
 
-                        # 判断验证Result
+                        # Judge verification result
                         valid = bool(validate_result) and all(validate_result)
                         syntax = syntax_error ==''
                         satisfy =  all(verify_result)
@@ -1453,9 +1395,9 @@ You must use these follow examples as a reference to complete the task, with the
                     
             if syntax and valid:
                 self.logger.info("PARTIAL CORRECT INVARIANT")
-                self.logger.info('continue symbolic execution')
+                self.logger.info("continue symbolic execution")
                 self.logger.info(annotations)
-                # 将 ACSL 注释写入Output文件
+                # Write ACSL annotations to output file
                 with open( output_symexe_c_file_path, 'w', encoding='utf-8') as file:
                         file.write(symexe_updated_code)
                 processor.execute()
@@ -1514,10 +1456,10 @@ You must use these follow examples as a reference to complete the task, with the
         self.logger.info(f'file_name: {file_name}')
 
         
-        # 用于记录每轮的Result
+        # Used to record results for each round
         results = []
 
-        # 记录最早满足的轮次（初始化为 None）
+        # Record earliest satisfying round (initialized to None)
         first_valid_round = None
         first_syntax_round = None
         first_satisfy_round = None
@@ -1539,15 +1481,15 @@ You must use these follow examples as a reference to complete the task, with the
             syntax = syntax_error == ''
             satisfy =  all(verify_result)
 
-                # 保存本轮Result
+            # Save this round's result
             results.append({
-                    "round": t + 1,   # 从1开始计数
+                    "round": t + 1,   # Count from 1
                     "valid": valid,
                     "syntax": syntax,
                     "satisfy": satisfy
                 })
 
-                # 如果是第一次满足，就记录下来
+            # If it's the first time satisfying, record it
             
             if syntax and first_syntax_round is None:
                 first_syntax_round = t + 1
@@ -1559,7 +1501,7 @@ You must use these follow examples as a reference to complete the task, with the
             if syntax and valid and satisfy:
                 break
 
-        # Output最早满足的轮次
+        # Output earliest satisfying round
         self.logger.info("="*50)
         self.logger.info("first_pass:")
         self.logger.info(f"syntax={first_syntax_round}, valid={first_valid_round},satisfy={first_satisfy_round}")

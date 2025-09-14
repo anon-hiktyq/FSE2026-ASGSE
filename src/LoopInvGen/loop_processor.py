@@ -9,16 +9,16 @@ from config import CodeAnalyzerConfig
 class LoopProcessor:
     def __init__ (self, info : FunctionInfo, config: CodeAnalyzerConfig):
         """
-        初始化 LoopProcessor 对象。
-        :param file_name: Filename（不带扩展名）
+        Initialize LoopProcessor object.
+        :param file_name: Filename (without extension)
         """
         
         self.function_info = info
         self.file_name = info.name
         self.code = info.code
-        self.loop_contents = None  # 存储循环内容
-        self.sorted_indices = None  # 存储排序后的索引
-        self.loop_entries = []  # 存储提取的循环条目
+        self.loop_contents = None  # Store loop content
+        self.sorted_indices = None  # Store sorted indices
+        self.loop_entries = []  # Store extracted loop entries
 
         self.goal_file = f"../goal/{self.file_name}_goal.v"
         self.proof_auto_file = f"../goal/{self.file_name}_proof_auto.v"
@@ -33,8 +33,8 @@ class LoopProcessor:
 
     def delete_file_if_exists(self, file_path):
         """
-        如果文件存在，则Deleted文件。
-        :param file_path: 文件路径
+        Delete file if it exists.
+        :param file_path: File path
         """
         file_path = os.path.join('../VST/test', file_path)
         if os.path.exists(file_path):
@@ -45,46 +45,46 @@ class LoopProcessor:
     
    
 
-    # 寻找每个 循环 开头和结尾的地方
+    # Find the beginning and end of each loop
     def process_loop(self,code):
     
 
         def determine_inner_loops(loop_info):
             """
-            判断每个循环是否是内层循环。
-            参数:
-                loop_info: list of tuples, 每个元素为 (start_pos, end_pos, loop_index)
-            返回:
-                list of bool，表示每个循环是否是内层循环（按 loop_info Input顺序）
+            Determine whether each loop is an inner loop.
+            Parameters:
+                loop_info: list of tuples, each element is (start_pos, end_pos, loop_index)
+            Returns:
+                list of bool, indicating whether each loop is an inner loop (in loop_info input order)
             """
             inner_flags = [False] * len(loop_info)
             
             
-            # 遍历所有循环对 (i, j)
+            # Traverse all loop pairs (i, j)
             for j in range(len(loop_info)):
                 s_j, e_j, idx_j = loop_info[j]
                 for i in range(len(loop_info)):
                     if i == j:
                         continue
                     s_i, e_i, idx_i = loop_info[i]
-                    # 如果循环i完全包含循环j：i的起始更早，结束更晚
+                    # If loop i completely contains loop j: i starts earlier and ends later
                     if s_i < s_j and e_i > e_j:
                         inner_flags[j] = True
-                        break  # 只要被一个外层循环包含，即可判定为内层
+                        break  # As long as it's contained by one outer loop, it can be determined as inner
             
             return inner_flags
-        # 将代码拆分成单字符的列表
+        # Split code into single character list
         code_list = list(code)
         
-        # 查找所有的 for 或 while 循环位置
+        # Find all for or while loop positions
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         matches = list(re.finditer(loop_pattern, code))
         loop_contents = []
         loop_indices=[]
         
-        # 处理每一个循环
+        # Process each loop
         for idx, match in enumerate(matches):
-            # 循环的起始位置
+            # Loop start position
             loop_start = match.start()    
 
             at_index = loop_start
@@ -95,7 +95,7 @@ class LoopProcessor:
             code_list[at_index] = f'/*@ Inv emp */ /*{idx}*/ \n {code_list[at_index]}'
 
             
-            # 在循环后Found第一个 { 对应的 }
+            # Find the first } corresponding to { after the loop
             brace_count = 0
             loop_end = match.end()
             end_index = loop_end
@@ -106,24 +106,24 @@ class LoopProcessor:
                     brace_count -= 1
                 end_index += 1
 
-            # 将 (at_index,end_index, idx) 压入列表
+            # Push (at_index,end_index, idx) into list
             loop_indices.append((at_index,end_index, idx))
           
 
-            # 提取循环内容
+            # Extract loop content
             loop_content = loop_head + ''.join(code_list[loop_start +1:end_index])
 
            
-            # 修改注释为 acsl 格式
+            # Modify comments to ACSL format
             assert_pattern = r'/\*@\s*(.*?)\s*\*/'
     
-            # 替换为 /*@ assert xxxxxx ;*/
+            # Replace with /*@ assert xxxxxx ;*/
             loop_content = re.sub(assert_pattern, r'/*@ assert \1; */', loop_content)
 
             loop_content = loop_content.replace('=>','==>')
             
             
-            # 打印循环内容
+            # Print loop content
             # print(f"LoopContent_{idx}:\n{loop_content}\n")
             loop_contents.append(loop_content)
         
@@ -132,34 +132,34 @@ class LoopProcessor:
         inner_flags = determine_inner_loops(loop_indices)
 
         
-        # 按 end_index 从小到大排序
+        # Sort by end_index from small to large
         sorted_indices = [x[2] for x in sorted(loop_indices, key=lambda x: x[1])]
         
             
-        # 将字符列表重新拼接成字符串
+        # Rejoin character list into string
         return ''.join(code_list),loop_contents,sorted_indices,inner_flags
     
 
 
     def get_loop_content(self,code,ridx):
 
-        # 查找所有的 for 或 while 循环位置
+        # Find all for or while loop positions
         code_list = list(code)
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         loop_content = None
         matches = list(re.finditer(loop_pattern, code))
         
-        # 处理每一个循环
+        # Process each loop
         for idx, match in enumerate(matches):
             if idx == ridx:
-                # 循环的起始位置
+                # Loop start position
                 loop_start = match.start()    
 
                 at_index = loop_start
 
                 loop_head = code_list[at_index] 
             
-                # 在循环后Found第一个 { 对应的 }
+                # Find the first } corresponding to { after the loop
                 brace_count = 0
                 loop_end = match.end()
                 end_index = loop_end
@@ -170,7 +170,7 @@ class LoopProcessor:
                         brace_count -= 1
                     end_index += 1
 
-                # 提取循环内容
+                # Extract loop content
                 loop_content = loop_head + ''.join(code_list[loop_start +1:end_index])
                 break
 
@@ -178,21 +178,21 @@ class LoopProcessor:
 
     
     def process_loop_file(self,input_file_path,output_file_path):
-        # 读取原始文件内容
+        # Read original file content
         if input_file_path != None:
             with open(input_file_path, 'r', encoding='utf-8') as infile:
                 code = infile.read()
         else:
             code = self.code
         
-        # 调用 process_code 处理代码
+        # Call process_code to process code
         processed_code = self.process_loop(code)[0]
         loop_contents = self.process_loop(code)[1]
         sorted_indices = self.process_loop(code)[2]
         inner_flags = self.process_loop(code)[3]
 
 
-        # 将处理后的代码写入新文件
+        # Write processed code to new file
         with open(output_file_path, 'w', encoding='utf-8') as outfile:
             outfile.write(processed_code)
 
@@ -200,9 +200,9 @@ class LoopProcessor:
 
     def get_loop_entries(self, text):
         """
-        使用正则表达式从文本中提取 LoopEntry_X 的条件。
-        :param text: Input的文本
-        :return: 提取的循环条目列表
+        Extract LoopEntry_X conditions from text using regular expressions.
+        :param text: Input text
+        :return: List of extracted loop entries
         """
        
         pattern = r"LoopEntry_(\d+):\s*\n([^\n]*)"
@@ -210,17 +210,17 @@ class LoopProcessor:
 
         self.loop_entries = []
         for match in matches:
-            loop_id = int(match[0])  # 提取编号
-            condition = match[1].strip()  # 提取条件并去掉首尾空白
+            loop_id = int(match[0])  # Extract number
+            condition = match[1].strip()  # Extract condition and remove leading/trailing whitespace
             self.loop_entries.append((loop_id, condition))
 
-        # 按 loop_id 排序
+        # Sort by loop_id
         self.loop_entries.sort(key=lambda x: x[0])
         return self.loop_entries
 
     def write_loops_to_json(self):
         """
-        将循环内容和条目写入 JSON 文件。
+        Write loop content and entries to JSON file.
         """
 
         if len(self.loop_contents) != len(self.loop_entries):
@@ -250,7 +250,7 @@ class LoopProcessor:
 
     def run_symexec(self):
         """
-        运行 symexec 命令并处理Output。
+        Run symexec command and process output.
         """
         command = [
             "build/symexec",
@@ -278,7 +278,7 @@ class LoopProcessor:
             print(f"An error occurred: {e}")
 
     def init_execute(self):
-        # 处理Input文件
+        # Process input file
         self.loop_contents, self.sorted_indices,self.inner_flags = self.process_loop_file(self.input_file,self.output_file)
 
         for idx in self.sorted_indices:
@@ -288,40 +288,40 @@ class LoopProcessor:
 
     def execute(self):
 
-        # 检查并Deleted旧文件
+        # Check and delete old files
         for file_path in [self.goal_file, self.proof_auto_file, self.proof_manual_file]:
             self.delete_file_if_exists(file_path)
 
-        # 运行 symexec 命令
+        # Run symexec command
         self.run_symexec()
 
     
     def update_loop_content(self,code,new_loop_content,ridx):
-        # 将代码拆分成单字符的列表
+        # Split code into single character list
 
         code_list = list(code)
         
-        # 查找所有的 for 或 while 循环位置
+        # Find all for or while loop positions
         loop_pattern = r'\b(for|while)\s*\((.*?)\)\s*{'
         matches = list(re.finditer(loop_pattern, code))
        
-        # 处理每一个循环
+        # Process each loop
         for idx, match in enumerate(matches):
            
-            # 循环的起始位置
+            # Loop start position
             if idx == ridx:
 
                 loop_start = match.start()  
                  
-                at_index = -1  # 默认值，如果没有Found '@' 就返回 -1
-                for i in range(loop_start - 1, -1, -1):  # 从 loop_start - 1 开始，反向遍历
+                at_index = -1  # Default value, return -1 if '@' not found
+                for i in range(loop_start - 1, -1, -1):  # Start from loop_start - 1, traverse backwards
                     if code_list[i] == '@':
                         at_index = i
-                        break  # Found第一个 '@'，跳出循环
+                        break  # Found first '@', break loop
 
                 at_index = at_index -2
 
-                # 在循环后Found第一个 { 对应的 }
+                # Find the first } corresponding to { after the loop
                 brace_count = 0
                 loop_end = match.end()
                 end_index = loop_end
@@ -334,28 +334,28 @@ class LoopProcessor:
                 
 
 
-        # 替换循环内容
+        # Replace loop content
         updated_code = (
-            ''.join(code_list[:at_index]) +  # 循环之前的部分
-            new_loop_content +                   # 替换后的循环内容
-            ''.join(code_list[end_index:])   # 循环之后的部分
+            ''.join(code_list[:at_index]) +  # Part before loop
+            new_loop_content +                   # Replaced loop content
+            ''.join(code_list[end_index:])   # Part after loop
         )
             
-        # 将字符列表重新拼接成字符串
+        # Rejoin character list into string
         return updated_code
 
     
 
 
 # def main():
-#   # 创建解析器
+#   # Create parser
 #     parser = argparse.ArgumentParser(description="Read file_name from command-line arguments.")
 #     parser.add_argument('file_name', type=str, help="The name of the file without extension")
 
-#   # 解析参数
+#   # Parse arguments
 #     args = parser.parse_args()
 
-#   # 创建 LoopProcessor 对象并执行
+#   # Create LoopProcessor object and execute
 #     processor = LoopProcessor(args.file_name)
 #     processor.init_execute()
 #     processor.execute()
