@@ -31,6 +31,8 @@ conda activate ASGSE
 
 ##### Openai-API Config
 
+add your own api key and base url in `config.py`
+
 ```python
 api_key:str = "your-key" 
 base_url:str = "your-base-url" 
