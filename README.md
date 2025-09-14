@@ -1,6 +1,7 @@
 # ASGSE
 
-ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for C programs. It is submitted as an FSE 2026 artifact for "Integrating Symbolic Execution with LLMs for Automated Program Specifications Generation."
+ASGSE is a toolkit designed for end-to-end generation of ACSL specifications for C programs. It is submitted as an FSE 2026 artifact for "Integrating Symbolic Execution with LLMs for Automated
+Generation of Program Specifications".
 
 ### Overview of ASGSE
 
