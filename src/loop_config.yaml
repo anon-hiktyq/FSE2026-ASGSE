@@ -16,10 +16,6 @@ main:
 # LLM Config
 llm:
   api_model: "gpt-4o"
-  api_key: "your-api-key"
-  base_url: "your-base-url"
-  api_temperature: 0.7
-  api_top_p: 0.7
 
 # precondition config
 preconditions:

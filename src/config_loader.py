@@ -42,7 +42,6 @@ class ConfigLoader:
         config.root_dir = main_config.get('root_dir')
         config.function_name = main_config.get('function_name')
         config.debug = main_config.get('debug', config.debug)
-        config.generlization = main_config.get('generlization', config.generlization)
         config.only_loop = main_config.get('only_loop', config.only_loop)
         config.list_loop = main_config.get('list_loop', config.list_loop)
         config.auto_annotation = main_config.get('auto_annotation', config.auto_annotation)
@@ -52,33 +51,6 @@ class ConfigLoader:
         config.template = main_config.get('template', config.template)
         config.auto_post = main_config.get('auto_post', config.auto_post)
         config.use_db = main_config.get('use_db', config.use_db)
-        config.db_path = main_config.get('db_path', config.db_path)
-        
-        # Set directory paths
-        config.input_dir = main_config.get('input_dir', config.input_dir)
-        config.annotated_c_dir = main_config.get('annotated_c_dir', config.annotated_c_dir)
-        config.annotated_loop_dir = main_config.get('annotated_loop_dir', config.annotated_loop_dir)
-        config.generated_loop_dir = main_config.get('generated_loop_dir', config.generated_loop_dir)
-        config.output_dir = main_config.get('output_dir', config.output_dir)
-        config.log_dir = main_config.get('log_dir', config.log_dir)
-        
-        return config
-    
-    def get_llm_config(self) -> LLMConfig:
-        """Get LLM configuration"""
-        llm_config = self.config_data.get('llm', {})
-        
-        # Create LLMConfig instance
-        config = LLMConfig()
-        
-        # Set LLM parameters
-        config.use_api_model = llm_config.get('use_api_model', config.use_api_model)
-        config.api_model = llm_config.get('api_model', config.api_model)
-        config.api_key = llm_config.get('api_key', config.api_key)
-        config.base_url = llm_config.get('base_url', config.base_url)
-        config.api_temperature = llm_config.get('api_temperature', config.api_temperature)
-        config.api_top_p = llm_config.get('api_top_p', config.api_top_p)
-        config.think_mode_enabled = llm_config.get('think_mode_enabled', config.think_mode_enabled)
         
         return config
     
@@ -100,13 +72,12 @@ def load_config_from_file(config_path: str) -> Tuple[MainConfig, LLMConfig, Dict
         config_path (str): Configuration file path
         
     Returns:
-        tuple: (MainConfig, LLMConfig, preconditions, model_name)
+        tuple: (MainConfig, preconditions, model_name)
     """
     loader = ConfigLoader(config_path)
     
     main_config = loader.get_main_config()
-    llm_config = loader.get_llm_config()
     preconditions = loader.get_preconditions()
     model_name = loader.get_model_name()
     
-    return main_config, llm_config, preconditions, model_name
+    return main_config, preconditions, model_name

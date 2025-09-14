@@ -55,29 +55,29 @@ def run_from_config(config_path: str, function_name: str = None, root_dir: str =
     """
     try:
         # Load configuration file
-        analyzer_config, llm_config, preconditions, model_name = load_config_from_file(config_path)
+        main_config, llm_config, preconditions, model_name = load_config_from_file(config_path)
         
         # Apply command line argument overrides
         if function_name:
-            analyzer_config.function_name = function_name
+            main_config.function_name = function_name
         if root_dir:
-            analyzer_config.root_dir = root_dir
+            main_config.root_dir = root_dir
         if debug is not None:
-            analyzer_config.debug = debug
+            main_config.debug = debug
     
         # Validate required parameters
-        if not analyzer_config.function_name:
+        if not main_config.function_name:
             raise ValueError("Must specify function name to analyze (via config file or --function parameter)")
-        if not analyzer_config.root_dir:
+        if not main_config.root_dir:
             raise ValueError("Must specify project root directory (via config file or --root-dir parameter)")
         
-        print(f"🚀 Starting analysis of function: {analyzer_config.function_name}")
-        print(f"📁 Project directory: {analyzer_config.root_dir}")
+        print(f"🚀 Starting analysis of function: {main_config.function_name}")
+        print(f"📁 Project directory: {main_config.root_dir}")
         print(f"📄 Configuration file: {config_path}")
         print(f"🤖 Using model: {model_name}")
         
         # Create processor and run analysis
-        processor = FunctionProcessor(analyzer_config, preconditions, model_name)
+        processor = FunctionProcessor(main_config, preconditions, model_name)
         processor.run_analysis()
         
         print("✅ Analysis completed!")

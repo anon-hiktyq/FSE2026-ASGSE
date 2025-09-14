@@ -88,6 +88,4 @@ void TripleAbsMaxFun(TripleAbsMax *pIp)
     }
 
     *(pIp->ret) = pIp->tmax;
-
-
 }
